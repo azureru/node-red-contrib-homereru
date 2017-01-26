@@ -1,0 +1,143 @@
+<script type="text/x-red" data-template-name="date-locale">
+    <!-- INPUT -->
+    <div class="form-row">
+        <label for="node-input-input"><i class="fa fa-arrow-left"></i> Input from</label>
+        <input type="text" id="node-input-input" style="width: 70%;" placeholder="payload">
+        <input type="hidden" id="node-input-inputType">
+    </div>
+
+    <!-- ADJUSTMENT -->
+    <div class="form-row">
+        <label for="node-input-adjAmount">Offset</label>
+        <select id="node-input-adjDir" style="width:4em">
+          <option value="add">+</option>
+          <option value="subtract">-</option>
+        </select>
+        <input type="text" id="node-input-adjAmount" placeholder="0" style="width:25%;">
+        <select id="node-input-adjType" style="width:30%">
+          <option value="days">Days</option>
+          <option value="hours">Hours</option>
+          <option value="weeks">Weeks</option>
+          <option value="months">Months</option>
+          <option value="quarters">Quarters</option>
+          <option value="years">Years</option>
+          <option value="minutes">Minutes</option>
+          <option value="seconds">Seconds</option>
+          <option value="milliseconds">Milliseconds</option>
+        </select>
+    </div>
+
+    <br />
+    <!-- INPUT TIMEZONE -->
+    <div class="form-row">
+        <label for="node-input-inFormat"><i class="fa fa-eye-open"></i> Input Format</label>
+        <input type="text" id="node-input-inFormat" placeholder="ISO8601 (UTC)">
+    </div>
+    <div class="form-row">
+        <label for="node-input-inTz">Input Tz</label>
+        <input type="text" id="node-input-inTz" placeholder="[determined by system]" style="width:70%;">
+    </div>
+
+    <!-- OUTPUT FORMAT -->
+    <br />
+    <div class="form-row">
+        <label for="node-input-outFormat"><i class="fa fa-eye-open"></i> Output Format</label>
+        <input type="text" id="node-input-outFormat" placeholder="ISO8601 (UTC)">
+    </div>
+    <!-- OUTPUT TIMEZONE -->
+    <div class="form-row">
+        <label for="node-input-outTz">Output Tz</label>
+        <input type="text" id="node-input-outTz" placeholder="[determined by system]" style="width:70%;">
+    </div>
+
+    <br/>
+    <!-- NODE NAME - Should always be the last field -->
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+
+<!-- Next, some simple help text is provided for the node.                   -->
+<script type="text/x-red" data-help-name="date-locale">
+    <p>
+        This node will convert <code>datetime</code> to nicely formatted
+        datetime that will be converted based on your specified format and timezone.
+    </p>
+    <p>
+        Timezone are written in <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank">Formats</a> for example:
+        <ul>
+            <li><code>Asia/Jakarta</code></li>
+            <li><code>UTC</code></li>
+            <li><code>Etc/GMT+7</code></li>
+            <li><code>America/Los_Angeles</code></li>
+        </ul>
+    </p>
+    <p>
+        Supported format can be seen <a href="https://momentjs.com/docs/#/parsing/string-format/" target="_blank">on this list</a> for example:
+        <ul>
+            <li><code>YYYY .. YY</code>4 and 2 digit year</li>
+            <li><code>M .. MM</code>Month number</li>
+            <li><code>D .. DD</code>Day of month</li>
+            <li><code>DDD .. DDDD</code>Day of year</li>
+            <li><code>X .. x</code>Unix timestamp in second and ms</li>
+            <li><code>e</code>Locale day of week</li>
+            <li><code>E</code>ISO day of week</li>
+        </ul>
+        There's also a list of predefined output format
+        <ul>
+            <li><code>iso8601, iso</code>Return ISO8601 date</li>
+            <li><code>fromnow, humane</code>Return of readable human date</li>
+            <li><code>calendar</code> Return string of calendar date</li>
+            <li><code>date</code> Return javascript date object</li>
+            <li><code>object</code> Will return javascript object</li>
+        </ul>
+    </p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('date-locale', {
+        category: 'hmr_date',
+        color    :"rgb(231, 231, 174)",
+        defaults: {
+            name       : {value:""},
+            inputType  : {value:'msg'},
+            inTz       : {value:''},
+            outTz      : {value:''},
+
+            adjAmount  : {value:0, validate:RED.validators.number()},
+            adjType    : {value:'days'},
+            adjDir     : {value:'add'},
+
+            inFormat     : {value:'x'},
+            outFormat     : {value:'object'},
+        },
+        inputs  : 1,
+        outputs : 1,
+        icon    : "inject.png",
+        label   : function() {
+            return this.name || this.topic || "date-locale";
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : "";
+        },
+         oneditprepare: function() {
+            if (!this.inputType) {
+              this.inputType = 'msg';
+            }
+
+            $('#node-input-input').typedInput({
+              default   : 'msg',
+              types     : ['msg','flow','global','date','str'],
+              typeField : $('#node-input-inputType')
+            });
+
+            // Get host locale and timezone
+            $.getJSON('hmr-api/moment',function(data) {
+              if ( $('#node-input-inTz').val() === '' ) $('#node-input-inTz').val(data.tz);
+              if ( $('#node-input-outTz').val() === '' ) $('#node-input-outTz').val(data.tz);
+            });
+          }
+    });
+</script>
