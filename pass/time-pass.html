@@ -1,0 +1,111 @@
+<!--
+ based on norelite code
+ https://github.com/nidayand/norelite
+-->
+
+<!-- DIALOG -->
+<script type="text/x-red" data-template-name="time-pass">
+    <div class="form-row">
+        <label for="node-input-inTz">Input Tz</label>
+        <input type="text" id="node-input-inTz" placeholder="[determined by system]" style="width:70%;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-from">From</label>
+        <input type="text" id="node-input-from">
+    </div>
+    <div class="form-row">
+        <label for="node-input-to">To</label>
+        <input type="text" id="node-input-to">
+    </div>
+</script>
+
+<!-- HELP -->
+<script type="text/x-red" data-help-name="time-pass">
+    <p>
+    This will passtrough <code>msg</code> only if the current time is
+    within the specified range
+    </p>
+</script>
+
+<!-- INIT -->
+<script type="text/javascript">
+    /**
+     * To validate the time is 00:00 - 23:59 valid
+     */
+    function validateTime(v) {
+        if (v.indexOf(":") == -1) {
+            return false;
+        }
+        var time = v.split(":");
+        if (time.length != 2) {
+            return false;
+        }
+        var h = parseInt(time[0]);
+        if (isNaN(h) || h < 0 || h > 23) {
+            return false;
+        }
+        var m = parseInt(time[1]);
+        if (isNaN(m) || m < 0 || m > 59) {
+            return false;
+        }
+        return true;
+    }
+
+    function validateTimeParse(v) {
+        if (v.indexOf(":") == -1) {
+            return false;
+        }
+        var time = v.split(":");
+        if (time.length != 2) {
+            return false;
+        }
+        var h = parseInt(time[0]);
+        if (isNaN(h) || h < 0 || h > 23) {
+            return false;
+        }
+        var m = parseInt(time[1]);
+        if (isNaN(m) || m < 0 || m > 59) {
+            return false;
+        }
+        return (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m);
+    }
+
+    RED.nodes.registerType('time-pass',{
+        category: 'hmr_pass',
+        defaults: {
+            inTz : {value : ''},
+            from : {value:'00:00', required: true, validate: validateTime},
+            to   : {value:'23:59', required: true, validate: validateTime},
+        },
+        color   : '#E7E7AE',
+        inputs  : 1,
+        outputs : 1,
+        icon    : "template.png",
+        label: function() {
+            return (this.from && this.to) ? (this.from + "-" + this.to) : "";
+        },
+        oneditsave: function() {
+            var nodeFrom = $("#node-input-from");
+            var nodeTo = $("#node-input-to");
+            var from = nodeFrom.val();
+            var to = nodeTo.val();
+            var isValidFrom = validateTimeParse(from);
+            var isValidTo = validateTimeParse(to);
+            if (!isValidFrom) {
+                alert("Invalid From Field - you must specify 24 hour time format");
+            } else {
+                nodeFrom.val(isValidFrom);
+            }
+            if (!isValidTo) {
+                alert("Invalid To Field - you must specify 24 hour time format");
+            } else {
+                nodeTo.val(isValidTo);
+            }
+        },
+        oneditprepare: function() {
+            $.getJSON('hmr-api/moment',function(data) {
+              if ( $('#node-input-inTz').val() === '' ) $('#node-input-inTz').val(data.tz);
+            });
+        }
+    });
+</script>

@@ -1,5 +1,6 @@
 /**
- * LICENSE
+ * based on norelite code
+ * https://github.com/nidayand/norelite
  **/
 
 module.exports = function(RED) {
@@ -65,6 +66,7 @@ module.exports = function(RED) {
             } else {
                 // not within bounds - do nothing
                 node.status({fill: 'red', shape: 'dot', text: sDay});
+                node.send(null);
             }
         });
 
@@ -77,4 +79,4 @@ module.exports = function(RED) {
     // Node functions.
     RED.nodes.registerType("day-pass",DayPassNode);
 
-}
+};

@@ -16,8 +16,11 @@
   "node-red": {
     "nodes": {
       "https-eval"  : "network/https-eval.js",
+
       "date-locale" : "date/date-locale.js",
-      "day-pass"    : "pass/day-pass.js"
+
+      "day-pass"    : "pass/day-pass.js",
+      "time-pass"    : "pass/time-pass.js"
     }
   },
   "author": {
