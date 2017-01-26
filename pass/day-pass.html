@@ -1,0 +1,89 @@
+<!--
+    LICENSE
+-->
+
+<!-- DIALOG -->
+<script type="text/x-red" data-template-name="day-pass">
+    <div class="form-row">
+        <label for="node-input-inTz">Input Tz</label>
+        <input type="text" id="node-input-inTz" placeholder="[determined by system]" style="width:70%;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-d1" style="display: block;">
+            Days
+        </label>
+        <label></label>
+        <table style="display: inline-block; width: 100%">
+            <tr>
+                <td><input type="checkbox" id="node-input-d1" value="1">Mon</td>
+                <td><input type="checkbox" id="node-input-d2" value="2">Tue</td>
+                <td><input type="checkbox" id="node-input-d3" value="3">Wed</td>
+                <td><input type="checkbox" id="node-input-d4" value="4">Thu</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" id="node-input-d5" value="5">Fri</td>
+                <td><input type="checkbox" id="node-input-d6" value="6">Sat</td>
+                <td><input type="checkbox" id="node-input-d7" value="7">Sun</td>
+            </tr>
+        </table>
+    </div>
+</script>
+
+<!-- HELP -->
+<script type="text/x-red" data-help-name="day-pass">
+    <p>
+    This will passtrough <code>msg</code> only if the current day is
+    matched with the specified day
+    </p>
+</script>
+
+<!-- INIT -->
+<script type="text/javascript">
+    RED.nodes.registerType('day-pass',{
+        category: 'hmr_pass',
+        defaults: {
+            inTz : {value : ''},
+            d1   : {value:true},
+            d2   : {value:true},
+            d3   : {value:true},
+            d4   : {value:true},
+            d5   : {value:true},
+            d6   : {value:true},
+            d7   : {value:true},
+        },
+        color   : '#E7E7AE',
+        inputs  : 1,
+        outputs : 1,
+        icon    : "template.png",
+        label: function() {
+            var label = [];
+            if (this.d1) {
+                label.push("Mon");
+            }
+            if (this.d2) {
+                label.push("Tue");
+            }
+            if (this.d3) {
+                label.push("Wed");
+            }
+            if (this.d4) {
+                label.push("Thu");
+            }
+            if (this.d5) {
+                label.push("Fri");
+            }
+            if (this.d6) {
+                label.push("Sat");
+            }
+            if (this.d7) {
+                label.push("Sun");
+            }
+            return label.join(", ");
+        },
+        oneditprepare: function() {
+            $.getJSON('hmr-api/moment',function(data) {
+              if ( $('#node-input-inTz').val() === '' ) $('#node-input-inTz').val(data.tz);
+            });
+        }
+    });
+</script>

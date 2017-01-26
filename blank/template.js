@@ -8,12 +8,12 @@ module.exports = function(RED) {
     //var foo = require("foo-library");
 
     // The main node definition - most things happen in here
-    function SampleNode(n) {
+    function SampleNode(config) {
         // Create a RED node
-        RED.nodes.createNode(this,n);
+        RED.nodes.createNode(this, config);
 
         // Store local copies of the node configuration (as defined in the .html)
-        this.topic = n.topic;
+        this.topic = config.topic;
 
         // copy "this" object in case we need it in context of callbacks of other functions.
         var node = this;
