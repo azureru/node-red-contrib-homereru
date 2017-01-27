@@ -140,9 +140,11 @@ module.exports = function(RED) {
                 break;
               case 'date':
               case 'jsdate':
+                // return js object Date()
                 outputMsg.payload = inp.toDate();
                 break;
               case 'object':
+                // return js object JSON
                 outputMsg.payload = inp.toObject();
                 // momentjs give months 0..11
                 outputMsg.payload.months += 1;
