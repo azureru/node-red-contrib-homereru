@@ -144,7 +144,9 @@ module.exports = function(RED) {
                 break;
               case 'object':
                 outputMsg.payload = inp.toObject();
-                // adding additional informations
+                // momentjs give months 0..11
+                outputMsg.payload.months += 1;
+                // add additional info
                 outputMsg.payload.dow = inp.isoWeekday();
                 outputMsg.payload.doy = inp.dayOfYear();
                 break;
