@@ -21,7 +21,8 @@
       "date-locale" : "date/date-locale.js",
 
       "day-pass"    : "pass/day-pass.js",
-      "time-pass"   : "pass/time-pass.js"
+      "time-pass"   : "pass/time-pass.js",
+      "value-pass"  : "pass/value-pass.js"
     }
   },
   "author": {

@@ -1,0 +1,37 @@
+<!-- DIALOG -->
+<script type="text/x-red" data-template-name="value-pass">
+    <div class="form-row">
+        <label for="node-input-from">From</label>
+        <input type="text" id="node-input-from">
+    </div>
+    <div class="form-row">
+        <label for="node-input-to">To</label>
+        <input type="text" id="node-input-to">
+    </div>
+</script>
+
+<!-- HELP -->
+<script type="text/x-red" data-help-name="value-pass">
+    <p>
+    This will passtrough <code>msg</code> only if the input <code>mgs.payload</code> is
+    within the specified range
+    </p>
+</script>
+
+<!-- INIT -->
+<script type="text/javascript">
+    RED.nodes.registerType('value-pass',{
+        category: 'hmr_pass',
+        defaults: {
+            from : {value:'0', required: true},
+            to   : {value:'100', required: true},
+        },
+        color   : '#E9967A',
+        inputs  : 1,
+        outputs : 1,
+        icon    : "hmr_trackback.png",
+        label: function() {
+            return (this.from && this.to) ? (this.from + "-" + this.to) : "";
+        },
+    });
+</script>

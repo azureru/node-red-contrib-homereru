@@ -27,8 +27,8 @@ module.exports = function(RED) {
             var inp = moment.tz(new Date(), node.inTz);
             var day = inp.isoWeekday();
             var pass = false;
-            var sDay = '';
 
+            var sDay = '';
             switch (day) {
                 case 1:
                     pass = node.d1;
@@ -54,20 +54,21 @@ module.exports = function(RED) {
                     pass = node.d6;
                     sDay = "Sat";
                 break;
-                case 6:
+                case 7:
                     pass = node.d7;
                     sDay = "Sun";
                 break;
             }
-            sDay = sDay;
+
             if (pass) {
                 node.status({fill: 'green', shape: 'ring', text: sDay});
                 node.send(msg);
-            } else {
-                // not within bounds - do nothing
-                node.status({fill: 'red', shape: 'dot', text: sDay});
-                node.send(null);
+                return;
             }
+
+            // not within bounds - do nothing
+            node.status({fill: 'red', shape: 'dot', text: sDay});
+            node.send(null);
         });
 
         this.on("close", function() {
