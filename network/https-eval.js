@@ -87,6 +87,11 @@ module.exports = function(RED) {
             opts.headers            = {};
             opts.port               = 443;
             opts.rejectUnauthorized = false;
+            opts.agent           = new https.Agent({
+                keepAlive          : false,
+                maxCachedSessions  : 0,
+                rejectUnauthorized : false
+            });
             var ctSet = "Content-Type"; // set default camel case
             var clSet = "Content-Length";
             if (msg.headers) {
@@ -174,15 +179,11 @@ module.exports = function(RED) {
                 msg.payload     = "";
 
                 // add the `cert`
-                msg.cert = null;
-                if (res.socket != null) {
-                    msg.cert = res.socket.getPeerCertificate(false);
-                    if (msg.cert != null) {
-                        delete msg.cert.raw;
-                    }
+                msg.cert = res.socket.getPeerCertificate(false);
+                if (msg.cert != null) {
+                    delete msg.cert.raw;
                 }
 
-                // msg.url = url;   // revert when warning above finally removed
                 res.on('data', function(chunk) {
                     msg.payload += chunk;
                 });
@@ -216,6 +217,16 @@ module.exports = function(RED) {
                     node.status({fill:"red",shape:"ring",text:"common.notification.errors.no-response"});
                 },10);
                 req.abort();
+            });
+
+            req.on('socket', function(socket) {
+                socket.on('secureConnect', function () {
+                    // add the `cert`
+                    msg.cert = socket.getPeerCertificate(false);
+                    if (msg.cert != null) {
+                        delete msg.cert.raw;
+                    }
+                });
             });
 
             req.on('error', function(err) {
