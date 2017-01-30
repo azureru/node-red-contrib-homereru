@@ -1,3 +1,7 @@
+/**
+ * Basically code from https://github.com/totallyinformation/node-red-contrib-moment
+ * With minor adjustment
+ */
 module.exports = function(RED) {
     "use strict";
 

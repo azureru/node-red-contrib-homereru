@@ -6,7 +6,7 @@
 module.exports = function(RED) {
     "use strict";
 
-    var moment = require('moment-timezone');
+    var dateUtil = require('../lib/date.js');
 
     // The main node definition - most things happen in here
     function DayPassNode(config) {
@@ -14,6 +14,10 @@ module.exports = function(RED) {
         RED.nodes.createNode(this, config);
 
         var node = this;
+
+        node.input = config.input || 'date'; // where to take the input from
+        node.inputType = config.inputType || 'msg'; // msg, flow or global
+
         node.d1 = config.d1;
         node.d2 = config.d2;
         node.d3 = config.d3;
@@ -24,7 +28,8 @@ module.exports = function(RED) {
         node.inTz = config.inTz;
 
         node.on('input', function (msg) {
-            var inp = moment.tz(new Date(), node.inTz);
+
+            var inp = dateUtil.parseDateInput(node, msg, node.inputType, node.input, node.inTz);
             var day = inp.isoWeekday();
             var pass = false;
 

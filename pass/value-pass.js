@@ -6,12 +6,38 @@ module.exports = function(RED) {
         RED.nodes.createNode(this, config);
 
         var node = this;
+
+        node.input = config.input || 'payload'; // where to take the input from
+        node.inputType = config.inputType || 'msg'; // msg, flow or global
+
         node.from = config.from;
         node.to = config.to;
 
         node.on('input', function (msg) {
-            var val = msg.payload;
-            var intVal = parseInt(val);
+            var inp = '';
+            try {
+              switch ( node.inputType ) {
+                case 'msg':
+                  inp = msg[node.input];
+                  break;
+                case 'flow':
+                  inp = node.context().flow.get(node.input);
+                  break;
+                case 'global':
+                  inp = node.context().global.get(node.input);
+                  break;
+                case 'str':
+                  inp = node.input;
+                  break;
+                default:
+                  inp = node.input;
+              }
+            } catch (err) {
+              inp = node.input;
+              node.warn('Input property, ' + node.inputType + '.' + node.input + ', does NOT exist.');
+            }
+
+            var intVal = parseInt(inp);
 
             var pass = false;
             if (intVal >= node.from && intVal <= node.to) {

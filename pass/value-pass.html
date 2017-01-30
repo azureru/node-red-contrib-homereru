@@ -1,5 +1,12 @@
 <!-- DIALOG -->
 <script type="text/x-red" data-template-name="value-pass">
+    <!-- INPUT -->
+    <div class="form-row">
+        <label for="node-input-input"><i class="fa fa-arrow-left"></i> Input from</label>
+        <input type="text" id="node-input-input" style="width: 70%;" placeholder="payload">
+        <input type="hidden" id="node-input-inputType">
+    </div>
+
     <div class="form-row">
         <label for="node-input-from">From</label>
         <input type="text" id="node-input-from">
@@ -23,6 +30,9 @@
     RED.nodes.registerType('value-pass',{
         category: 'hmr_pass',
         defaults: {
+            inputType  : {value:'msg'},
+            input      : {value:'payload'},
+
             from : {value:'0', required: true},
             to   : {value:'100', required: true},
         },
@@ -33,5 +43,16 @@
         label: function() {
             return (this.from && this.to) ? (this.from + "-" + this.to) : "";
         },
+        oneditprepare: function() {
+            if (!this.inputType) {
+              this.inputType = 'msg';
+            }
+
+            $('#node-input-input').typedInput({
+              default   : 'msg',
+              types     : ['msg','flow','global','str'],
+              typeField : $('#node-input-inputType')
+            });
+        }
     });
 </script>

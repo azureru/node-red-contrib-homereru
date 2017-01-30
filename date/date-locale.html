@@ -1,3 +1,7 @@
+<!--
+Basically code from https://github.com/totallyinformation/node-red-contrib-moment
+Apache 2 License with minor adjustment
+-->
 <script type="text/x-red" data-template-name="date-locale">
     <!-- INPUT -->
     <div class="form-row">
@@ -102,7 +106,10 @@
         color   : '#E7E7AE',
         defaults: {
             name       : {value:""},
+
             inputType  : {value:'msg'},
+            input      : {value:''},
+
             inTz       : {value:''},
             outTz      : {value:''},
 

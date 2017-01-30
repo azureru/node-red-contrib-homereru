@@ -6,7 +6,7 @@
 module.exports = function(RED) {
     "use strict";
 
-    var moment = require('moment-timezone');
+    var dateUtil = require('../lib/date.js');
 
     // The main node definition - most things happen in here
     function TimePassNode(config) {
@@ -14,6 +14,10 @@ module.exports = function(RED) {
         RED.nodes.createNode(this, config);
 
         var node = this;
+
+        node.input = config.input || 'date'; // where to take the input from
+        node.inputType = config.inputType || 'msg'; // msg, flow or global
+
         node.from = config.from;
         node.to = config.to;
         node.inTz = config.inTz;
@@ -66,7 +70,7 @@ module.exports = function(RED) {
         node.to = parseTime(node.to);
 
         node.on('input', function (msg) {
-            var inp = moment.tz(new Date(), node.inTz);
+            var inp = dateUtil.parseDateInput(node, msg, node.inputType, node.input, node.inTz);
             var ch = inp.hour();
             var cm = inp.minute();
             var toSec = ch * 3600 + cm * 60 + inp.second();

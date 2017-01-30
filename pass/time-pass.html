@@ -5,6 +5,13 @@
 
 <!-- DIALOG -->
 <script type="text/x-red" data-template-name="time-pass">
+    <!-- INPUT -->
+    <div class="form-row">
+        <label for="node-input-input"><i class="fa fa-arrow-left"></i> Input from</label>
+        <input type="text" id="node-input-input" style="width: 70%;" placeholder="payload">
+        <input type="hidden" id="node-input-inputType">
+    </div>
+
     <div class="form-row">
         <label for="node-input-inTz">Input Tz</label>
         <input type="text" id="node-input-inTz" placeholder="[determined by system]" style="width:70%;">
@@ -83,6 +90,10 @@
         category: 'hmr_pass',
         defaults: {
             inTz : {value : ''},
+
+            inputType  : {value:'date'},
+            input      : {value:''},
+
             from : {value:'00:00', required: true, validate: validateTime},
             to   : {value:'23:59', required: true, validate: validateTime},
         },
@@ -112,6 +123,16 @@
             }
         },
         oneditprepare: function() {
+            if (!this.inputType) {
+              this.inputType = 'date';
+            }
+
+            $('#node-input-input').typedInput({
+              default   : 'msg',
+              types     : ['msg','flow','global','date'],
+              typeField : $('#node-input-inputType')
+            });
+
             $.getJSON('hmr-api/moment',function(data) {
               if ( $('#node-input-inTz').val() === '' ) $('#node-input-inTz').val(data.tz);
             });
