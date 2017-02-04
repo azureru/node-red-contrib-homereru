@@ -162,6 +162,7 @@ module.exports = function(RED) {
           }
 
           // Send the output message
+          node.status({fill:"green",shape:"dot",text: inp.format("YYYY-MM-DD HH:mm Z")});
           node.send(outputMsg);
         });
     }
