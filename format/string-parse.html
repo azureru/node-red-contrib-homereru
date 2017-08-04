@@ -25,7 +25,7 @@
         	<i class="fa fa-tasks"></i>
         	Delimiter
         </label>
-        <input type="text" id="node-input-delimiter" placeholder="Delimiter">
+        <input type="text" id="node-input-delimiter" placeholder="Delimiter (space,/,&,|)">
     </div>
 
     <br/>
@@ -39,25 +39,22 @@
 <script type="text/x-red" data-help-name="str-parse">
 	<p>Parse string using few common methods</p>
 	<ul>
-		<li>Delimiter Split (e.g. command1 parameter1 parameter2)</li>
-		<li>Chat (e.g. /command1 parameter1 parameter2)</li>
-		<li>Query (e.g. command=command1&p1=parameter&p2=haha&nonce=9811)</li>
+		<li>Delimiter Split (e.g. <code>command1 parameter1 parameter2</code>)</li>
+		<li>Chat (e.g. <code>/command1 parameter1 parameter2</code>)</li>
+		<li>Query (e.g. <code>command=command1&p1=parameter&p2=haha&nonce=9811</code>)</li>
 	</ul>
 	<p>
-		Since method Delimiter and Chat does not have a named parameter - to access
-		the values you can use:
+		Since method Delimiter and Chat does not have a named parameter - to access the values you can use:
 		<pre>
-				msg.payload.get('command')
-				msg.payload.get('1')
-				msg.payload.get('2')
-		</pre>
-		For Query method that have named parameter - you can use:
+msg.payload.get('command')
+msg.payload.get('1')
+msg.payload.get('2')</pre>
+		For Query method that have named parameters - you can use:
 		<pre>
-				msg.payload.get('command')
-				msg.payload.get('nonce')
-				msg.payload.get('p1')
-				msg.payload.get('p2')
-		</pre>
+msg.payload.get('command')
+msg.payload.get('nonce')
+msg.payload.get('p1')
+msg.payload.get('p2')</pre>
 	</p>
 </script>
 
@@ -74,7 +71,7 @@
 
             modeType   : {value: 'delimiter'},
 
-            delimiter  : {value: ' '}
+            delimiter  : {value: ''}
         },
 
         inputs  : 1,

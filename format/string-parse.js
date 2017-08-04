@@ -30,7 +30,7 @@ module.exports = function(RED) {
             try {
               switch ( node.inputType ) {
                 case 'msg':
-                  inp = msg[node.input];
+                  inp = RED.util.getMessageProperty(msg, node.input);
                   break;
                 case 'flow':
                   inp = node.context().flow.get(node.input);
@@ -58,33 +58,46 @@ module.exports = function(RED) {
           }
 
           var outputMessage = msg;
-          outputMessage._internalMsg = {};
+          outputMessage.parsed = {};
           switch (node.modeType) {
           	case "delimiter":
           		var arr = inp.split(node.delimiter);
           		if (arr.length > 0) {
-          			outputMessage._internalMsg['command'] = arr[0];
-          			for (var i = 0; i < arr.length; i++) {
-          				outputMessage._internalMsg['' + i] = arr[i];
-          			}
-          		}
-          	break;
-          	case "query":
-          		outputMessage._internalMsg = qs.parse(inp);
-          	break;
-          	case "chat":
-          		var arr = inp.split(node.delimiter);
-          		if (arr.length > 0) {
-          			outputMessage._internalMsg['command'] = arr[0].replace('/', '');
+          			outputMessage.parsed['command'] = arr[0];
           			var wholeMessage = '';
           			for (var i = 0; i < arr.length; i++) {
-          				outputMessage._internalMsg['' + i] = arr[i];
+          				outputMessage.parsed['' + i] = arr[i];
           				if (i>0) {
           					wholeMessage += node.delimiter+arr[i];
           				}
           			}
-          			// arr[0] is all string after `/command`
-          			outputMessage._internalMsg['0'] = wholeMessage.trim();
+          			outputMessage.command = arr[0];
+          			outputMessage.param = wholeMessage.trim();
+          			outputMessage.all = inp;
+          		}
+          	break;
+          	case "query":
+          		outputMessage.parsed = qs.parse(inp);
+        			outputMessage.command = '';
+        			outputMessage.all = inp;
+          	break;
+          	case "chat":
+          		var arr = inp.split(node.delimiter);
+          		if (arr.length > 0) {
+          			outputMessage.parsed['command'] = arr[0].replace('/', '');
+          			var wholeMessage = '';
+          			for (var i = 0; i < arr.length; i++) {
+          				outputMessage.parsed['' + i] = arr[i];
+          				if (i>0) {
+          					wholeMessage += node.delimiter+arr[i];
+          				}
+          			}
+          			wholeMessage = wholeMessage.trim();
+          			// parsed[0] is all string after `/command`
+          			outputMessage.parsed['0'] = wholeMessage;
+		      			outputMessage.command = outputMessage.parsed['command'];
+		      			outputMessage.param = wholeMessage;
+		      			outputMessage.all = inp;
           		}
           	break;
           }
