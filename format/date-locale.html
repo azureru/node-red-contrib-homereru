@@ -2,10 +2,15 @@
 Basically code from https://github.com/totallyinformation/node-red-contrib-moment
 Apache 2 License with minor adjustment
 -->
+
+<!-- CONFIG -->
 <script type="text/x-red" data-template-name="date-locale">
     <!-- INPUT -->
     <div class="form-row">
-        <label for="node-input-input"><i class="fa fa-arrow-left"></i> Input from</label>
+        <label for="node-input-input">
+        	<i class="fa fa-arrow-left"></i>
+        	Input from
+        </label>
         <input type="text" id="node-input-input" style="width: 70%;" placeholder="payload">
         <input type="hidden" id="node-input-inputType">
     </div>
@@ -63,7 +68,7 @@ Apache 2 License with minor adjustment
 </script>
 
 
-<!-- Next, some simple help text is provided for the node.                   -->
+<!-- HELP -->
 <script type="text/x-red" data-help-name="date-locale">
     <p>
         This node will convert <code>datetime</code> to nicely formatted
@@ -102,7 +107,7 @@ Apache 2 License with minor adjustment
 
 <script type="text/javascript">
     RED.nodes.registerType('date-locale', {
-        category: 'hmr_date',
+        category: 'hmr_format',
         color   : '#E7E7AE',
         defaults: {
             name       : {value:""},

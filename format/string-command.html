@@ -1,0 +1,101 @@
+<!-- CONFIG -->
+<script type="text/x-red" data-template-name="string-command">
+    <!-- INPUT -->
+    <div class="form-row">
+        <label for="node-input-input">
+        	<i class="fa fa-arrow-left"></i>
+        	Input from
+        </label>
+        <input type="text" id="node-input-input" style="width: 70%;" placeholder="payload">
+        <input type="hidden" id="node-input-inputType">
+    </div>
+
+    <!-- MODE -->
+    <div class="form-row">
+        <label for="node-input-modeType">Mode</label>
+        <select id="node-input-modeType">
+          <option value="delimiter">Delimiter</option>
+          <option value="chat">Chat</option>
+          <option value="query">Query</option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-delimiter">
+        	<i class="fa fa-tasks"></i>
+        	Delimiter
+        </label>
+        <input type="text" id="node-input-delimiter" placeholder="Delimiter">
+    </div>
+
+    <br/>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<!-- HELP -->
+<script type="text/x-red" data-help-name="string-command">
+	<p>Parse string using few common methods</p>
+	<ul>
+		<li>Delimiter Split (e.g. command1 parameter1 parameter2)</li>
+		<li>Chat (e.g. /command1 parameter1 parameter2)</li>
+		<li>Query (e.g. command=command1&p1=parameter&p2=haha&nonce=9811)</li>
+	</ul>
+	<p>
+		Since method Delimiter and Chat does not have a named parameter - to access
+		the values you can use:
+		<pre>
+				msg.payload.get('command')
+				msg.payload.get('1')
+				msg.payload.get('2')
+		</pre>
+		For Query method that have named parameter - you can use:
+		<pre>
+				msg.payload.get('command')
+				msg.payload.get('nonce')
+				msg.payload.get('p1')
+				msg.payload.get('p2')
+		</pre>
+	</p>
+</script>
+
+<!-- INIT -->
+<script type="text/javascript">
+    RED.nodes.registerType('string-command',{
+        category: 'hmr_format',
+        color   : '#E7E7AE',
+        defaults: {
+            name       : {value:""},
+
+            inputType  : {value:'msg'},
+            input      : {value:''},
+
+            modeType   : {value: 'delimiter'}
+
+            delimiter  : {value: ' '},
+        },
+
+        inputs  : 1,
+        outputs : 1,
+        icon    : "hmr_string.png",
+        label   : function() {
+            return this.name || this.topic || "string-command";
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: function() {
+            if (!this.inputType) {
+              this.inputType = 'msg';
+            }
+
+            $('#node-input-input').typedInput({
+              default   : 'msg',
+              types     : ['msg','flow','global','date','str'],
+              typeField : $('#node-input-inputType')
+            });
+        }
+    });
+</script>
