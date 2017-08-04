@@ -56,6 +56,48 @@ msg.payload.get('nonce')
 msg.payload.get('p1')
 msg.payload.get('p2')</pre>
 	</p>
+	The output will be
+<pre>
+msg = {
+	payload : .. // untouched
+	parsed  : {} // parsed object
+	all     : "" // whole input string
+    command : "" // command string (where relevant)
+    param   : "" // the whole input string - without command
+}</pre>
+Example of parsed <code>/command p1 p2 p3</code> in Chat mode
+<pre>
+msg = {
+	parsed : {
+	  0 : "p1 p2 p3",
+	  1 : "p1",
+	  2 : "p2",
+	  3 : "p3",
+	  command: "command",
+	}
+}</pre>
+Example of parsed <code>a0 a1 a2 a3</code> in Delimiter mode:
+<pre>
+msg = {
+	parsed : {
+		0 : "a0",
+		1 : "a1",
+		1 : "a2",
+		1 : "a3"
+	}
+}
+</pre>
+Example of parsed <code>nonce=100&arr[]=1&arr[]=2</code> in Query mode:
+<pre>
+msg = {
+	parsed : {
+	   nonce : "100",
+	   arr : [
+	   	 "1", "2"
+	   ]
+	}
+}
+</pre>
 </script>
 
 <!-- INIT -->
