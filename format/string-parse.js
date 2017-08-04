@@ -1,6 +1,8 @@
 module.exports = function(RED) {
     "use strict";
 
+    var qs = require('querystring');
+
     function StringCommandNode(config) {
         // Create a RED node
         RED.nodes.createNode(this, config);
@@ -68,6 +70,7 @@ module.exports = function(RED) {
           		}
           	break;
           	case "query":
+          		outputMessage._internalMsg = qs.parse(inp);
           	break;
           	case "chat":
           		var arr = inp.split(node.delimiter);
