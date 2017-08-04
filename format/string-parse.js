@@ -70,11 +70,24 @@ module.exports = function(RED) {
           	case "query":
           	break;
           	case "chat":
+          		var arr = inp.split(node.delimiter);
+          		if (arr.length > 0) {
+          			outputMessage._internalMsg['command'] = arr[0].replace('/', '');
+          			var wholeMessage = '';
+          			for (var i = 0; i < arr.length; i++) {
+          				outputMessage._internalMsg['' + i] = arr[i];
+          				if (i>0) {
+          					wholeMessage += node.delimiter+arr[i];
+          				}
+          			}
+          			// arr[0] is all string after `/command`
+          			outputMessage._internalMsg['0'] = wholeMessage.trim();
+          		}
           	break;
           }
-          node.send(outputMsg);
+          node.send(outputMessage);
         });
     }
 
-    RED.nodes.registerType("string-command",StringCommandNode);
+    RED.nodes.registerType("str-parse",StringCommandNode);
 }

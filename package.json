@@ -18,10 +18,10 @@
       "https-eval"  : "network/https-eval.js",
       "ip-public"   : "network/ip-public.js",
 
-      "string-command" : "format/string-command.js",
+      "str-parse" : "format/string-parse.js",
       "date-locale" : "format/date-locale.js",
 
-      "file-pass"  : "pass/file-pass.js",
+      "file-pass"   : "pass/file-pass.js",
       "day-pass"    : "pass/day-pass.js",
       "time-pass"   : "pass/time-pass.js",
       "value-pass"  : "pass/value-pass.js"
