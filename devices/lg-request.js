@@ -14,6 +14,10 @@ module.exports = function (RED) {
 			});
 
 			node.on('input', function (msg) {
+				if (!node.tvConn.connected) {
+					node.send({payload: false});
+				}
+
 				node.tvConn.request(msg.topic, msg.payload, function (err, res) {
 					if (!err) {
 						node.send({payload: res});
