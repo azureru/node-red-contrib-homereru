@@ -21,6 +21,8 @@
       "str-parse" : "format/string-parse.js",
       "date-locale" : "format/date-locale.js",
 
+      "lgtv-request2" : "devices/lg-request.js",
+
       "file-pass"   : "pass/file-pass.js",
       "day-pass"    : "pass/day-pass.js",
       "time-pass"   : "pass/time-pass.js",

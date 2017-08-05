@@ -1,0 +1,44 @@
+<script type="text/javascript">
+	RED.nodes.registerType('lgtv-request2', {
+		category: 'hmr_devices',
+		color: '#C0DEED',
+		inputs: 1,
+		outputs: 1,
+		defaults: {
+			tv: {
+				value: '',
+				type: 'lgtv-config',
+				required: true
+			},
+			name: {
+				value: ''
+			}
+		},
+		label: function () {
+			return this.name || 'lgtv-request2';
+		},
+		icon: 'bridge-dash.png',
+		paletteLabel: 'lgtv-request2'
+	});
+</script>
+
+<script type="text/x-red" data-template-name="lgtv-request2">
+	<div class="form-row">
+		<label for="node-input-tv"><i class="icon-bookmark"></i> TV</label>
+		<input type="text" id="node-input-tv">
+	</div>
+	<div class="form-row">
+		<label for="node-input-name"><i class="icon-bookmark"></i> Name</label>
+		<input type="text" id="node-input-name">
+	</div>
+</script>
+
+<script type="text/x-red" data-help-name="lgtv-request2">
+	<p>Send arbitrary requests to the API</p>
+	<p><code>msg.topic</code> is the API URL. Example: <code>ssap://com.webos.applicationManager/listLaunchPoints</code></p>
+	<p>Send an empty object (<code>{}</code>) as <code>msg.payload</code> if you want to omit the payload.</p>
+	<p>See <a href="http://webostv.developer.lge.com/api" target="_blank">http://webostv.developer.lge.com/api</a></p>
+	<p>
+		Return msg.payload as JSON object if success and false if failed
+	</p>
+</script>
