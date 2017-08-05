@@ -77,7 +77,12 @@ module.exports = function(RED) {
           		}
           	break;
           	case "query":
-          		outputMessage.parsed = qs.parse(inp);
+          		if (typeof inp == "object") {
+          			// this could happen if we use node-`http`-request
+          			outputMessage.parsed = inp;
+          		} else {
+          			outputMessage.parsed = qs.parse(inp);
+          		}
         			outputMessage.command = '';
         			outputMessage.all = inp;
           	break;
