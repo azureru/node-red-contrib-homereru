@@ -1,88 +1,69 @@
+var Centrifuge = require('../lib/centrifugo.js');
+var Token = require('../lib/token.js');
+
 module.exports = function (RED) {
 
 	var status;
 	var token;
 	var client;
-	var Centrifuge = require('./lib/centrifuge.js');
-	var Token = require('./lib/token.js');
 
-	function CentrifugeConfigNode(config) {
+	function CenConfigNode(config) {
 		RED.nodes.createNode(this, config);
-		var node = this;
+		var self = this;
 
-		node.users = {};
-		node.host = config.host;
-		node.user = config.user;
-		node.secret = node.credentials.secret;
-		node.info = "";
-		var subscriptions = {};
+		self.users = {};
+		self.host = config.host;
+		self.user = config.user;
+		self.channel = config.channel || 'public';
+		self.secret = self.credentials.secret;
+		self.info = "";
 
-		var timestamp = Math.round(new Date().getTime() / 1000);
-		var tokenize = new Token(node.secret);
-		var clientToken = tokenizer.clientToken(node.user, ""+timestamp, node.info);
+		var timestamp = "" + Math.round(new Date().getTime() / 1000);
+		var tokenizer = new Token(self.secret);
+		var clientToken = tokenizer.clientToken(self.user, ""+timestamp, self.info);
 
 		var client = new Centrifuge({
-			url: host,
-			user: node.user,
-			timestamp: timestamp
-			info: node.info
+			url: self.host,
+			user: self.user,
+			timestamp: timestamp,
+			info: self.info,
+			debug: false,
 			token: clientToken
 		});
+		var callbacks = {
+		    "message": function(message) {
+		    	var msg = message;
+				Object.keys(self.users).forEach(function (id) {
+					self.users[id].emit("input", msg);
+				});
+		    },
+		    "join": function(message) {
+		    },
+		    "leave": function(message) {
+		    },
+		    "subscribe": function(context) {
+		    },
+		    "error": function(errContext) {
+		    },
+		    "unsubscribe": function(context) {
+		    }
+		}
 		client.on('connecting', function () {
-			node.setStatus('connecting');
+			self.setStatus('connecting');
 		});
 		client.on('connect', function () {
-			node.setStatus('connect');
-			node.connected = true;
-
-			Object.keys(subscriptions).forEach(function (channel) {
-				client.subscribe(channel, function (err, res) {
-					node.subscriptionHandler(channel, err, res);
-				});
-			});
-
-			node.emit('tvconnect');
+			self.setStatus('connect');
+			self.connected = true;
+			client.subscribe(self.channel, callbacks);
 		});
-		client.on('error', function (e) {
-			node.connected = false;
-			node.setStatus(e.code);
-		});
-		client.on('close', function () {
-			node.emit('tvclose');
-			node.connected = false;
-			node.setStatus('close');
-		});
-		centrifuge.connect();
-
-		this.subscriptionHandler = function (channel, err, res) {
-			if (subscriptions[channel]) {
-				Object.keys(subscriptions[channel]).forEach(function (id) {
-					subscriptions[channel][id](err, res);
-				});
-			}
-		};
-
-		this.subscribe = function (id, channel, callback) {
-			if (!subscriptions[channel]) {
-				subscriptions[channel] = {};
-				if (node.connected) {
-					client.subscribe(channel, function (err, res) {
-						node.subscriptionHandler(channel, err, res);
-					});
-				}
-			}
-			subscriptions[channel][id] = callback;
-		};
+		client.connect();
 
 		this.register = function (clientNode) {
-			node.users[clientNode.id] = clientNode;
+			self.users[clientNode.id] = clientNode;
 		};
 
 		this.deregister = function (clientNode, done) {
-			delete node.users[clientNode.id];
-			Object.keys(subscriptions).forEach(function (channel) {
-				delete subscriptions[channel][clientNode.id];
-			});
+			delete self.users[clientNode.id];
 			return done();
 		};
 
@@ -126,13 +107,13 @@ module.exports = function (RED) {
 					};
 			}
 
-			Object.keys(node.users).forEach(function (id) {
-				node.users[id].status(s);
+			Object.keys(self.users).forEach(function (id) {
+				self.users[id].status(s);
 			});
 		};
 	}
 
-	RED.nodes.registerType('cen-config', CentrifugeConfigNode, {
+	RED.nodes.registerType('cen-config', CenConfigNode, {
 		credentials: {
 			secret: {type: 'text'}
 		}
