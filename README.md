@@ -23,6 +23,10 @@ contributing PR to those module will kind of ruin their use-case
 - IP Public : Get your public IP
 - HTTPS Eval : Do HTTPS request, and return the `cert` information as JSON
 
+## Todo
+- True Pass : Only pass if the value is true
+- Delta Pass : Only pass the value if the value is different with the previous value
+
 
 # Icons
 Sanscons - CCSA 3.0 from http://somerandomdude.com/work/sanscons/

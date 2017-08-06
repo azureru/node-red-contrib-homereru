@@ -1,4 +1,5 @@
 module.exports = function (RED) {
+
 	function LgtvRequest2Node(n) {
 		RED.nodes.createNode(this, n);
 		var node = this;
@@ -30,5 +31,6 @@ module.exports = function (RED) {
 			this.error('No TV Configuration');
 		}
 	}
+
 	RED.nodes.registerType('lgtv-request2', LgtvRequest2Node);
 };

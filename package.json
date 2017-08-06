@@ -15,18 +15,21 @@
   ],
   "node-red": {
     "nodes": {
-      "https-eval"  : "network/https-eval.js",
-      "ip-public"   : "network/ip-public.js",
+      "cen-config" : "centrifugo/cen-config.js",
 
-      "str-parse" : "format/string-parse.js",
-      "date-locale" : "format/date-locale.js",
+      "https-eval": "network/https-eval.js",
+      "ip-public": "network/ip-public.js",
+      "str-parse": "format/string-parse.js",
+      "date-locale": "format/date-locale.js",
 
-      "lgtv-request2" : "devices/lg-request.js",
+      "lgtv-request2": "devices/lg-request.js",
 
-      "file-pass"   : "pass/file-pass.js",
-      "day-pass"    : "pass/day-pass.js",
-      "time-pass"   : "pass/time-pass.js",
-      "value-pass"  : "pass/value-pass.js"
+      "cen-input"  : "centrifugo/cen-input.js",
+
+      "file-pass": "pass/file-pass.js",
+      "day-pass": "pass/day-pass.js",
+      "time-pass": "pass/time-pass.js",
+      "value-pass": "pass/value-pass.js"
     }
   },
   "author": {
@@ -42,6 +45,7 @@
     "moment-timezone": "^0.5.11",
     "mustache": "^2.3.0",
     "os-locale": "^2.0.0",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "ws": "^3.1.0"
   }
 }

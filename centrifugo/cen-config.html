@@ -1,0 +1,41 @@
+<script type="text/javascript">
+	RED.nodes.registerType('cen-config', {
+		category: 'config',
+		defaults: {
+			host: {
+				value: '',
+				required: true
+			},
+			user: {
+				value: '',
+				required: true
+			}
+			name : {
+				value: ''
+			}
+		},
+		credentials: {
+			secret: {
+				type: 'text'
+			}
+		},
+		label: function () {
+			return this.host || 'Config';
+		}
+	});
+</script>
+
+<script type="text/x-red" data-template-name="cen-config">
+	<div class="form-row">
+		<label for="node-config-input-host"><i class="icon-bookmark"></i> Host</label>
+		<input type="text" id="node-config-input-host">
+	</div>
+	<div class="form-row">
+		<label for="node-config-input-user"><i class="icon-bookmark"></i> User</label>
+		<input type="text" id="node-config-input-user">
+	</div>
+	<div class="form-row">
+		<label for="node-config-input-secret"><i class="icon-bookmark"></i> Secret</label>
+		<input type="text" id="node-config-input-secret">
+	</div>
+</script>
