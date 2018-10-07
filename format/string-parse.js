@@ -89,7 +89,17 @@ module.exports = function(RED) {
           	case "chat":
           		var arr = inp.split(node.delimiter);
           		if (arr.length > 0) {
-          			outputMessage.parsed['command'] = arr[0].replace('/', '');
+                var cmd = arr[0];
+                var bot = "";
+                cmd = cmd.replace('/', '');
+                // found '@' - the command is a bot command /tv@botname
+                if (cmd.indexOf('@') != -1) {
+                  var cmdSplit = cmd.split('@');
+                  cmd = cmdSplit[0];
+                  bot = cmdSplit[1];
+                }
+          			outputMessage.parsed['command'] = cmd;
+                outputMessage.parsed['bot'] = bot;
           			var wholeMessage = '';
           			for (var i = 0; i < arr.length; i++) {
           				outputMessage.parsed['' + i] = arr[i];
