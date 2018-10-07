@@ -17,7 +17,7 @@ contributing PR to those module will kind of ruin their use-case
 
 ## Format
 - Date Locale : Date formatter
-- String Command : String parser
+- String Command : String parser for query string, chat command and split string
 
 ## Network
 - IP Public : Get your public IP
@@ -37,5 +37,3 @@ https://github.com/totallyinformation/node-red-contrib-moment
 
 norelite
 https://github.com/nidayand/norelite
-
-
