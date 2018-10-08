@@ -1,0 +1,53 @@
+<!--
+  The idea is based on limit-pass
+  But this node is for generic use
+-->
+<script type="text/x-red" data-template-name="limit-pass">
+    <div id="rate-details" class="form-row">
+        <label for="node-input-rate"><i class="fa fa-clock-o"></i> Rate</label>
+        <input type="text" id="node-input-rate" placeholder="1" style="direction:rtl; width:30px !important">
+        <label for="node-input-rateUnits"> msg(s) per</label>
+        <select id="node-input-rateUnits" style="width:140px !important">
+          <option value="second">Second</option>
+          <option value="minute">Minute</option>
+          <option value="hour" >Hour</option>
+          <option value="day">Day</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" >
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="limit-pass">
+    <p>The <b>limit-pass node</b> is used to limit the passed message and is based on the core "Delay" node
+    (basic logic is all from that node but only with the functionality of a delay) but with some additional functionality.
+    It will, whenever a new message is received, validate the current buffer of messages and if the instruction differs (e.g. turn off or dim value)
+    from what previously have been received it will remove the first messages in the queue.
+    This is used to avoid any unnecessary burst of on/off actions and should be placed <b>just before the end node</b>
+    that will send the actions to the hardware device</p>
+    <p>Default rate limit of 30 msg/minute.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('limit-pass',{
+        category: 'hmr_pass',      // the palette category
+        color:"#E2D96E",
+        defaults: {             // defines the editable properties of the node
+            name: {value:""},   //  along with default values.
+            rate: {value:"30", required:true, validate:RED.validators.number()},
+            rateUnits: {value: "minute"}
+        },
+        inputs:1,                // set the number of inputs - only 0 or 1
+        outputs:1,               // set the number of outputs - 0 to n
+        icon: "hmr_seconds.png",    // set the icon (held in public/icons)
+        label: function() {      // sets the default label contents
+              var units = this.rateUnits ? this.rateUnits.charAt(0) : "s";
+              return this.name|| "limit "+this.rate+" msg/"+units;
+        },
+        oneditprepare: function() {
+          $( "#node-input-rate" ).spinner({min:1});
+        }
+    });
+</script>
