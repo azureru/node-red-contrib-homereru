@@ -27,6 +27,7 @@
     from what previously have been received it will remove the first messages in the queue.
     This is used to avoid any unnecessary burst of on/off actions and should be placed <b>just before the end node</b>
     that will send the actions to the hardware device</p>
+    <p>Just make sure msg.payload is a simple value that can be compared with == operator</p>
     <p>Default rate limit of 30 msg/minute.</p>
 </script>
 
