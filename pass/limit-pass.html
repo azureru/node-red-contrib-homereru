@@ -6,7 +6,7 @@
     <div id="rate-details" class="form-row">
         <label for="node-input-rate"><i class="fa fa-clock-o"></i> Rate</label>
         <input type="text" id="node-input-rate" placeholder="1" style="direction:rtl; width:30px !important">
-        <label for="node-input-rateUnits"> msg(s) per</label>
+        <label for="node-input-rateUnits">msg(s) per</label>
         <select id="node-input-rateUnits" style="width:140px !important">
           <option value="second">Second</option>
           <option value="minute">Minute</option>
@@ -37,7 +37,7 @@
         color:"#E9967A",
         defaults: {             // defines the editable properties of the node
             name: {value:""},   //  along with default values.
-            rate: {value:"30", required:true, validate:RED.validators.number()},
+            rate: {value:"1", required:true, validate:RED.validators.number()},
             rateUnits: {value: "minute"}
         },
         inputs:1,                // set the number of inputs - only 0 or 1

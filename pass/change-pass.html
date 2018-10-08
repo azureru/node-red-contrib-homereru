@@ -1,0 +1,68 @@
+<!-- DIALOG -->
+<script type="text/x-red" data-template-name="change-pass">
+    <!-- INPUT -->
+    <div class="form-row">
+        <label for="node-input-input"><i class="fa fa-arrow-left"></i> Input from</label>
+        <input type="text" id="node-input-input" style="width: 70%;" placeholder="payload">
+        <input type="hidden" id="node-input-inputType">
+    </div>
+    <div id="decay-details" class="form-row">
+        <label for="node-input-rate"><i class="fa fa-clock-o"></i> Decay</label>
+        <input type="text" id="node-input-rate" placeholder="1" style="direction:rtl; width:30px !important">
+        <label for="node-input-rateUnits"></label>
+        <select id="node-input-rateUnits" style="width:140px !important">
+          <option value="second">Second</option>
+          <option value="minute">Minute</option>
+          <option value="hour" >Hour</option>
+          <option value="day">Day</option>
+        </select>
+    </div>
+</script>
+
+<!-- HELP -->
+<script type="text/x-red" data-help-name="change-pass">
+    <p>
+    This will --passtrough-- <code>msg</code> only if the input <code>mgs.payload</code>
+    is changed from the previously recorded value
+
+    Decay is when we will reset the stored delta value
+    </p>
+</script>
+
+<!-- INIT -->
+<script type="text/javascript">
+    RED.nodes.registerType('change-pass',{
+        category: 'hmr_pass',
+        defaults: {
+            inputType  : {value:'msg'},
+            input      : {value:'payload'},
+            rate: {value:"0"},
+            rateUnits: {value: "minute"}
+        },
+        color   : '#E9967A',
+        inputs  : 1,
+        outputs : 1,
+        icon    : "hmr_trackback.png",
+        label: function() {
+          if (this.rate == "0") {
+            return "Delta";
+          } else {
+            var units = this.rateUnits ? this.rateUnits.charAt(0) : "s";
+            return "Delta "+this.rate+" "+units;
+          }
+        },
+        oneditprepare: function() {
+            if (!this.inputType) {
+              this.inputType = 'msg';
+            }
+
+            $( "#node-input-rate" ).spinner({min:1});
+
+            $('#node-input-input').typedInput({
+              default   : 'msg',
+              types     : ['msg','flow','global','str'],
+              typeField : $('#node-input-inputType')
+            });
+        }
+    });
+</script>

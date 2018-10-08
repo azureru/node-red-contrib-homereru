@@ -26,7 +26,8 @@
       "day-pass": "pass/day-pass.js",
       "time-pass": "pass/time-pass.js",
       "value-pass": "pass/value-pass.js",
-      "limit-pass": "pass/limit-pass.js"
+      "limit-pass": "pass/limit-pass.js",
+      "change-pass": "pass/change-pass.js"
     }
   },
   "author": {
