@@ -98,7 +98,6 @@ module.exports = function(RED) {
       node.intervalID = -1;
       node.lastSent = null;
     });
-
   }
   RED.nodes.registerType("limit-pass", HmrLimitNode);
 }

@@ -88,6 +88,8 @@ module.exports = function(RED) {
 
     this.on("close", function() {
       node.status({});
+      clearInterval(node.intervalId);
+      node.intervalId = -1;
     });
   }
 

@@ -1,0 +1,276 @@
+<script type="text/x-red" data-template-name="source-event">
+    <div class="form-row">
+        <label for="node-input-config"><i class="fa fa-bookmark"></i> Config</label>
+        <input type="text" id="node-input-config">
+    </div>
+    <div class="form-row" id="default-details">
+        <label for="node-input-def"><i class="fa fa-bookmark"></i> Initial value</label>
+        <input type="text" id="node-input-def">
+    </div>
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-expire" placeholder="Only" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-expire" style="width: 70%;">Expire?</label>
+    </div>
+    <div id="expire-details">
+        <div class="form-row">
+            <label for="node-input-timeout"><i class="fa fa-clock-o"></i> For</label>
+            <input type="text" id="node-input-timeout" placeholder="Time" style="width:50px !important">
+            <select id="node-input-timeoutUnits" style="width:200px !important">
+              <option value="milliseconds">Milliseconds</option>
+              <option value="seconds">Seconds</option>
+              <option value="minutes">Minutes</option>
+              <option value="hours">Hours</option>
+              <option value="days">Days</option>
+            </select>
+        </div>
+        <div class="form-row" id="expire-value">
+            <label for="node-input-expval"><i class="fa fa-bookmark"></i> Expiration value</label>
+            <input type="text" id="node-input-expval">
+        </div>
+    </div>
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-toggle" placeholder="Only" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-toggle" style="width: 70%;">Toggle (0/1)</label>
+    </div>
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-cycle" placeholder="Only" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-cycle" style="width: 70%;">Cycle (0 to N)</label>
+    </div>
+    <div id="cycle-details">
+        <div class="form-row">
+            <label for="node-input-cyclen"><i class="fa fa-clock-o"></i> Cycle to </label>
+            <input type="text" id="node-input-cyclen" placeholder="number" style="width:50px !important">
+        </div>
+    </div>
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-output" placeholder="Only" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-output" style="width: 70%;">Use output</label>
+    </div>
+    <div class="form-row" id="hysteresis-details">
+        <label for="node-input-hysteresis"><i class="fa fa-bookmark"></i> Hysteresis</label>
+        <input type="text" id="node-input-hysteresis" style="width:50px">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-bookmark"></i> Name</label>
+        <input type="text" id="node-input-name">
+        <input type="hidden" id="node-input-uid"/>
+    </div>
+
+</script>
+<script type="text/x-red" data-help-name="source-event">
+<p>Stores the received value and will trigger any <strong>handler-event</strong> nodes that have rules that are using this node for evaluation.</p>
+<p>
+<strong>Config</strong> is used to set some global configuration variables.
+use the same configuration for all source-event and handler-event nodes that
+should be able to communicate (e.g. source-event sends new values to handler-event nodes
+for evaluation in the rules).
+<p>
+<strong>Rule delay</strong> value is used for rules to wait before sending out a
+message as sometimes multiple sources gets updated close to each other and this
+variable can avoid unnecessary output messages. Rule delay can be overridden in the handler-event
+node if needed.
+
+<p>
+<p><strong>Initial value</strong> is sent, when the node is deploy, as a start value.
+If you want to wait for the first incoming message simply clear this field.
+
+<p>
+<strong>Expire?</strong> is used to set an expiration on the incoming value and
+the value to be sent when it has expired.
+If Toggle is enabled the reset value will be '0'.
+
+<p>
+<strong>Toggle (0/1)</strong> will initially send an '0' upon deploy and for
+each incoming message it will simply toggle between '0' and '1'.
+If <strong>Value can expire</strong> is set the expiration value is '0'.</p>
+
+<p>
+<strong>Cycle (0 to n)</strong>&nbsp;will initially send an '0' upon deploy.
+The&nbsp;<strong>Cycle to</strong> value is a numeric value and for every incoming message
+it will count up and when the next value after&nbsp;<strong>n</strong> is reach it will
+go back to '0'. A typical use case might be a button that can hold multiple different
+states - e.g. off/on/auto. If <strong>Value can expire</strong> is set the expiration value is '0'.</p>
+
+<p><strong>Use output </strong>can be used to send the value of the node further to any other node.</p>
+
+<p><strong>Hysteresis</strong> number is used to avoid switching on/off if
+the values are closed to what has been set in the rules.
+E.g. 0.1 if you would require a new value to be at least 0.1 from the previous
+value in order to have the value changed.
+This is only applicable for numbers and not strings and it should be
+a positive number (&gt;=0). If set to 0 it is disabled.</p>
+
+<p><strong>Name</strong> is important as it will be used in the handler-event node.</p>
+</script>
+
+<script type="text/javascript">
+  function oneditprepareDatasource() {
+    $("#node-input-expire").change(function() {
+      if ($("#node-input-expire").is(':checked')) {
+        $("#expire-details").show();
+      } else {
+        $("#expire-details").hide();
+      }
+    });
+
+    $("#node-input-cycle").change(function() {
+      if ($("#node-input-cycle").is(':checked')) {
+        $("#cycle-details").show();
+        $("#expire-value").hide();
+        $("#default-details").hide();
+        $("#hysteresis-details").hide();
+
+        //Disable toggle
+        $("#node-input-toggle").prop('checked', false);
+      } else {
+        $("#cycle-details").hide();
+        $("#default-details").show();
+        $("#expire-value").show();
+        $("#hysteresis-details").show();
+      }
+    });
+
+    $("#node-input-toggle").change(function() {
+      if ($("#node-input-toggle").is(':checked')) {
+        $("#default-details").hide();
+        $("#expire-value").hide();
+        $("#hysteresis-details").hide();
+        $("#cycle-details").hide();
+
+        //Disable cycle
+        $("#node-input-cycle").prop('checked', false);
+      } else {
+        $("#default-details").show();
+        $("#expire-value").show();
+        $("#hysteresis-details").show();
+      }
+    });
+  }
+
+  RED.nodes.registerType('source-event', {
+    category: 'hmr_event',
+    color: "#E2D96E",
+    defaults: {
+      config: {
+        type: "config-event",
+        required: true
+      },
+      uid: {
+        value: "",
+        required: true
+      },
+      name: {
+        value: "",
+        required: true
+      },
+      def: {
+        value: "",
+        required: false
+      },
+      expire: {
+        value: false,
+        required: true
+      },
+      timeout: {
+        value: 100,
+        required: false,
+        validate: RED.validators.number()
+      },
+      timeoutUnits: {
+        value: "seconds",
+        required: false
+      },
+      expval: {
+        value: false,
+        required: false
+      },
+      output: {
+        value: false,
+        required: true
+      },
+      hysteresis: {
+        value: 0,
+        required: true,
+        validate: RED.validators.number()
+      },
+      toggle: {
+        value: false,
+        required: true
+      },
+      cycle: {
+        value: false,
+        required: true
+      },
+      cyclen: {
+        value: "3",
+        required: false
+      },
+      outputs: {
+        value: 0
+      } //Storing if outputs is enabled. To be able to copy the node.
+    },
+    inputs: 1,
+    outputs: 0,
+    icon: "fa-hdd-o.png",
+    align: "right",
+    label: function() {
+      return (this.name || "undefined");
+    },
+    oneditprepare: oneditprepareDatasource,
+    oneditsave: function() {
+      var node = this;
+      if ($("#node-input-output").is(":checked")) {
+        node.outputs = 1;
+      } else {
+        node.outputs = 0;
+      }
+      //Set default value =0 when toggle mode is on
+      //and hysteresis to 0
+      if ($("#node-input-toggle").is(":checked") || $("#node-input-cycle").is(":checked")) {
+        $("#node-input-def").val('0');
+        $("#node-input-hysteresis").val('0');
+        //If expiration is set, set the expiration value to 0
+        if ($("#node-input-expire").is(":checked")) {
+          $("#node-input-expval").val('0');
+        }
+      }
+    },
+    onpaletteadd: function(){
+      /* Monitor if a node is added and generate a unique id based on
+         timestamp. This timestamp is used to create the MQTT message and
+         the handler-event nodes knows to which message to subscribe to
+      */
+      RED.events.on('nodes:add', function(n){
+        if (n.type == 'source-event'){
+          //Generate GUID
+          var S4 = function(){
+            return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+          }
+          var guid = function(){
+            return (S4() + S4() + "-" + S4() + "-4" + S4().substr(0,3) + "-" + S4() + "-" + S4() + S4() + S4()).toLowerCase();
+          }
+
+          if (n.uid == ''){
+            // if uid is empty fill with guid
+            n.uid = guid();
+          } else {
+            /* if uid is available, check that there are no
+            other nodes with the same id. If available generate
+            a new. This enables copy of nodes as well as importing
+            of flows/nodes */
+            RED.nodes.eachNode(function(cf){
+              if (cf.type == 'source-event' && cf.uid == n.uid && cf.id !== n.id){
+                n.uid = guid();
+              }
+            });
+          }
+
+        }
+      });
+    }
+  });
+</script>

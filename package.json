@@ -27,7 +27,10 @@
       "time-pass": "pass/time-pass.js",
       "value-pass": "pass/value-pass.js",
       "limit-pass": "pass/limit-pass.js",
-      "change-pass": "pass/change-pass.js"
+      "change-pass": "pass/change-pass.js",
+      "config-event": "event/config-event.js",
+      "handler-event": "event/handler-event.js",
+      "source-event": "event/source-event.js"
     }
   },
   "author": {
