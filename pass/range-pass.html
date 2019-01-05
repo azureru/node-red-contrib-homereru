@@ -1,5 +1,5 @@
 <!-- DIALOG -->
-<script type="text/x-red" data-template-name="value-pass">
+<script type="text/x-red" data-template-name="range-pass">
     <!-- INPUT -->
     <div class="form-row">
         <label for="node-input-input"><i class="fa fa-arrow-left"></i> Input from</label>
@@ -18,15 +18,15 @@
 </script>
 
 <!-- HELP -->
-<script type="text/x-red" data-help-name="value-pass">
+<script type="text/x-red" data-help-name="range-pass">
     <p>
-    This will --passtrough-- <code>msg</code> only if the input <code>mgs.payload</code> is within the specified value range
+    This will --passtrough-- <code>msg</code> only if the input <code>mgs.payload</code> is within the specified range value
     </p>
 </script>
 
 <!-- INIT -->
 <script type="text/javascript">
-    RED.nodes.registerType('value-pass',{
+    RED.nodes.registerType('range-pass',{
         category: 'hmr_pass',
         defaults: {
             inputType  : {value:'msg'},
