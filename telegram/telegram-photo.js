@@ -10,6 +10,7 @@ module.exports = function(RED) {
     if (this.server) {
       this.on('close', function(done) {
         // call when node is shutdown
+        done();
       });
     } else {
       this.error('No Server Configuration');
