@@ -1,7 +1,7 @@
 var Centrifuge = require('../lib/centrifugo.js');
 var Token = require('../lib/token.js');
 
-module.exports = function (RED) {
+module.exports = function(RED) {
 
 	var status;
 	var token;
@@ -20,7 +20,7 @@ module.exports = function (RED) {
 
 		var timestamp = "" + Math.round(new Date().getTime() / 1000);
 		var tokenizer = new Token(self.secret);
-		var clientToken = tokenizer.clientToken(self.user, ""+timestamp, self.info);
+		var clientToken = tokenizer.clientToken(self.user, "" + timestamp, self.info);
 
 		var client = new Centrifuge({
 			url: self.host,
@@ -31,43 +31,38 @@ module.exports = function (RED) {
 			token: clientToken
 		});
 		var callbacks = {
-		    "message": function(message) {
-		    	var msg = message;
-				Object.keys(self.users).forEach(function (id) {
+			"message": function(message) {
+				var msg = message;
+				Object.keys(self.users).forEach(function(id) {
 					self.users[id].emit("input", msg);
 				});
-		    },
-		    "join": function(message) {
-		    },
-		    "leave": function(message) {
-		    },
-		    "subscribe": function(context) {
-		    },
-		    "error": function(errContext) {
-		    },
-		    "unsubscribe": function(context) {
-		    }
+			},
+			"join": function(message) {},
+			"leave": function(message) {},
+			"subscribe": function(context) {},
+			"error": function(errContext) {},
+			"unsubscribe": function(context) {}
 		}
-		client.on('connecting', function () {
+		client.on('connecting', function() {
 			self.setStatus('connecting');
 		});
-		client.on('connect', function () {
+		client.on('connect', function() {
 			self.setStatus('connect');
 			self.connected = true;
 			client.subscribe(self.channel, callbacks);
 		});
 		client.connect();
 
-		this.register = function (clientNode) {
+		this.register = function(clientNode) {
 			self.users[clientNode.id] = clientNode;
 		};
 
-		this.deregister = function (clientNode, done) {
+		this.deregister = function(clientNode, done) {
 			delete self.users[clientNode.id];
 			return done();
 		};
 
-		this.setStatus = function (c) {
+		this.setStatus = function(c) {
 			status = c;
 			var s;
 			switch (c) {
@@ -107,7 +102,7 @@ module.exports = function (RED) {
 					};
 			}
 
-			Object.keys(self.users).forEach(function (id) {
+			Object.keys(self.users).forEach(function(id) {
 				self.users[id].status(s);
 			});
 		};
@@ -115,7 +110,9 @@ module.exports = function (RED) {
 
 	RED.nodes.registerType('cen-config', CenConfigNode, {
 		credentials: {
-			secret: {type: 'text'}
+			secret: {
+				type: 'text'
+			}
 		}
 	});
 };

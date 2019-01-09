@@ -1,0 +1,85 @@
+<script type="text/x-red" data-template-name="telegram-photo">
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="Topic">
+    </div>
+
+    <div class="form-row">
+  		<label for="node-input-server"><i class="icon-bookmark"></i> Telegram</label>
+  		<input type="text" id="node-input-server">
+  	</div>
+
+    <!-- CHAT ID -->
+    <div class="form-row">
+        <label for="node-input-chatId"><i class="fa fa-arrow-left"></i> Chat Id</label>
+        <input type="text" id="node-input-chatId" style="width: 70%;" placeholder="payload">
+        <input type="hidden" id="node-input-chatIdType">
+    </div>
+
+    <!-- Message -->
+    <div class="form-row">
+        <label for="node-input-message"><i class="fa fa-arrow-left"></i> Photo</label>
+        <input type="text" id="node-input-message" style="width: 70%;" placeholder="payload">
+        <input type="hidden" id="node-input-messageType">
+    </div>
+
+    <br/>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<!-- HELP -->
+<script type="text/x-red" data-help-name="telegram-photo">
+  To send photo to telegram
+
+  Photo can be a filename or a buffer
+</script>
+
+<!-- INIT -->
+<script type="text/javascript">
+    RED.nodes.registerType('telegram-photo',{
+        category: 'hmr_telegram',      // the palette category
+        defaults: {             // defines the editable properties of the node
+    	   	server: {
+       		 	value :"",
+       		 	type  :"telegram-config",
+       		 	required: true
+    	   	},
+          chatIdType  : {value:'msg'},
+          chatId      : {value:'payload'},
+          messageType  : {value:'msg'},
+          message      : {value:'payload'},
+        },
+        color   : '#CCC',
+        inputs:1,               // set the number of inputs - only 0 or 1
+        outputs:0,              // set the number of outputs - 0 to n
+        // set the icon (held in icons dir below where you save the node)
+        label: function() {     // sets the default label contents
+            return this.name||this.topic||"telegram-photo";
+        },
+        labelStyle: function() { // sets the class to apply to the label
+            return this.name ? "node_label_italic":"";
+        },
+        oneditprepare: function() {
+          if (!this.chatIdType) {
+            this.chatIdType = 'msg';
+          }
+          if (!this.messageType) {
+            this.messageType = 'msg';
+          }
+
+          $('#node-input-chatId').typedInput({
+            default   : 'msg',
+            types     : ['msg','flow','global','str'],
+            typeField : $('#node-input-chatIdType')
+          });
+          $('#node-input-message').typedInput({
+            default   : 'msg',
+            types     : ['msg','flow','global','str'],
+            typeField : $('#node-input-messageType')
+          });
+        }
+    });
+</script>
