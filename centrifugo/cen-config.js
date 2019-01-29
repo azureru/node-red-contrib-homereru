@@ -2,7 +2,6 @@ var Centrifuge = require('../lib/centrifugo.js');
 var Token = require('../lib/token.js');
 
 module.exports = function(RED) {
-
 	var status;
 	var token;
 	var client;
@@ -40,7 +39,9 @@ module.exports = function(RED) {
 			"join": function(message) {},
 			"leave": function(message) {},
 			"subscribe": function(context) {},
-			"error": function(errContext) {},
+			"error": function(errContext) {
+				console.log(errContext);
+			},
 			"unsubscribe": function(context) {}
 		}
 		client.on('connecting', function() {
@@ -49,8 +50,8 @@ module.exports = function(RED) {
 		client.on('connect', function() {
 			self.setStatus('connect');
 			self.connected = true;
-			client.subscribe(self.channel, callbacks);
 		});
+		client.subscribe(self.channel, callbacks);
 		client.connect();
 
 		this.register = function(clientNode) {
