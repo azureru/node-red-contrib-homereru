@@ -210,7 +210,7 @@ module.exports = function(RED) {
             }
           }
           if (node.ret === "bin") {
-            msg.payload = new Buffer(msg.payload, "binary");
+            msg.payload = Buffer.from(msg.payload, "binary");
           } else if (node.ret === "obj") {
             try {
               msg.payload = JSON.parse(msg.payload);

@@ -1,4 +1,4 @@
-var Centrifuge = require('../lib/centrifugo.js');
+var Centrifuge = require('centrifuge');
 var Token = require('../lib/token.js');
 
 module.exports = function(RED) {
@@ -21,14 +21,8 @@ module.exports = function(RED) {
 		var tokenizer = new Token(self.secret);
 		var clientToken = tokenizer.clientToken(self.user, "" + timestamp, self.info);
 
-		var client = new Centrifuge({
-			url: self.host,
-			user: self.user,
-			timestamp: timestamp,
-			info: self.info,
-			debug: false,
-			token: clientToken
-		});
+		var client = new Centrifuge(self.host);
+		client.setToken(self.secret);
 		var callbacks = {
 			"message": function(message) {
 				var msg = message;
