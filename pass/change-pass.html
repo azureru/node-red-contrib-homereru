@@ -1,11 +1,12 @@
 <!-- DIALOG -->
 <script type="text/x-red" data-template-name="change-pass">
-    <!-- INPUT -->
+    <!-- Input -->
     <div class="form-row">
         <label for="node-input-input"><i class="fa fa-arrow-left"></i> Input from</label>
         <input type="text" id="node-input-input" style="width: 70%;" placeholder="payload">
         <input type="hidden" id="node-input-inputType">
     </div>
+    <!-- Decay -->
     <div id="decay-details" class="form-row">
         <label for="node-input-rate"><i class="fa fa-clock-o"></i> Decay</label>
         <input type="text" id="node-input-rate" placeholder="1" style="direction:rtl; width:30px !important">
@@ -17,16 +18,23 @@
           <option value="day">Day</option>
         </select>
     </div>
+    <!-- Pass to logic -->
+    <div class="form-row">
+        <label for="node-input-islogic">Is logic</label>
+        <input type="checkbox" id="node-input-islogic">
+    </div>
 </script>
 
 <!-- HELP -->
 <script type="text/x-red" data-help-name="change-pass">
     <p>
-    This will --passtrough-- <code>msg</code> only if the input <code>mgs.payload</code>
+    If <strong>is logic</strong> is checked this node will always pass the <code>msg</code> with additional <code>logic</code> property that
+    indicate whether the <code>input</code> is changed. (0 no-changes, 1 detect changes)
+    <p>
+    When not checked, this node will only pass the <code>msg</code> to the next node only if the <code>input</code>
     is changed from the previously recorded value
-
-    Decay is when we will reset the stored delta value
-    </p>
+    <p>
+    <strong>Decay</strong> is how long we store the delta value to determine changes
 </script>
 
 <!-- INIT -->
@@ -36,28 +44,37 @@
         defaults: {
             inputType  : {value:'msg'},
             input      : {value:'payload'},
-            rate: {value:"0"},
-            rateUnits: {value: "minute"}
+            islogic    : {value:false},
+            rate       : {value:"0"},
+            rateUnits  : {value: "minute"}
         },
         color   : '#E9967A',
         inputs  : 1,
         outputs : 1,
         icon    : "hmr_trackback.png",
+
         label: function() {
+          var msg = '';
+          // show the decay rate
           if (this.rate == "0") {
-            return "Δ";
+            msg = "Δ";
           } else {
             var units = this.rateUnits ? this.rateUnits.charAt(0) : "s";
-            return "Δ "+this.rate+" "+units;
+            msg = "Δ ("+this.rate+" "+units+")";
           }
+          // show user this is a logic pass
+          if (this.islogic) {
+            msg = msg + ' →';
+          }
+          return msg;
         },
+
         oneditprepare: function() {
             if (!this.inputType) {
               this.inputType = 'msg';
             }
 
             $( "#node-input-rate" ).spinner({min:1});
-
             $('#node-input-input').typedInput({
               default   : 'msg',
               types     : ['msg','flow','global','str'],

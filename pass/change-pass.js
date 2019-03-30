@@ -1,6 +1,8 @@
 module.exports = function(RED) {
   "use strict";
 
+  var util = require('../lib/util.js');
+
   function ChangePassNode(config) {
     RED.nodes.createNode(this, config);
 
@@ -22,32 +24,12 @@ module.exports = function(RED) {
     node.input = config.input || 'payload'; // where to take the input from
     node.inputType = config.inputType || 'msg'; // msg, flow or global
     node.previousValue = "";
+    node.islogic = config.islogic || false;
 
     node.on('input', function(msg) {
       var inp = '';
-      try {
-        switch (node.inputType) {
-          case 'msg':
-            inp = RED.util.getMessageProperty(msg, node.input);
-            break;
-          case 'flow':
-            inp = node.context().flow.get(node.input);
-            break;
-          case 'global':
-            inp = node.context().global.get(node.input);
-            break;
-          case 'str':
-            inp = node.input;
-            break;
-          default:
-            inp = node.input;
-        }
-      } catch (err) {
-        inp = node.input;
-        node.warn('Input property, ' +
-          node.inputType + '.' +
-          node.input + ', does NOT exist.');
-      }
+
+      inp = util.parseMsg(RED, node, node.inputType, node.input, msg);
 
       var pass = false;
       var value = inp;
@@ -68,25 +50,29 @@ module.exports = function(RED) {
         }
       }
 
+      if (node.islogic) {
+          // on logic mode - we always pass the value
+          // but we add flag to msg to indicate the logic state
+          msg.logic = (pass) ? 1 : 0;
+          util.statusOk(node, msg.logic);
+          node.send(msg);
+          return;
+      }
+
+      // is not a logic mode - we only continue to next
+      // node if the condition is passed
       if (pass) {
-        node.status({
-          fill: 'green',
-          shape: 'ring',
-          text: value
-        });
+        util.statusOk(node, value);
         node.send(msg);
         return;
       }
 
-      node.status({
-        fill: 'red',
-        shape: 'dot',
-        text: value
-      });
+      util.statusFail(node, value);
       node.send(null);
     });
 
     this.on("close", function() {
+      // clean
       node.status({});
       clearInterval(node.intervalId);
       node.intervalId = -1;
