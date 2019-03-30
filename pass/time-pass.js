@@ -6,11 +6,10 @@
 module.exports = function(RED) {
   "use strict";
 
+  var util = require('../lib/util.js');
   var dateUtil = require('../lib/date.js');
 
-  // The main node definition - most things happen in here
   function TimePassNode(config) {
-    // Create a RED node
     RED.nodes.createNode(this, config);
 
     var node = this;
@@ -54,6 +53,7 @@ module.exports = function(RED) {
 
     node.isFromValid = validate(node.from);
     node.isToValid = validate(node.to);
+
     node.valid = node.isFromValid && node.isToValid;
     if (!node.valid) {
       if (!node.isFromValid) {
@@ -62,11 +62,7 @@ module.exports = function(RED) {
       if (!node.isToValid) {
         node.warn("[To] field is invalid!");
       }
-      node.status({
-        fill: "red",
-        shape: "ring",
-        text: "Invalid Config!"
-      });
+      util.statusFail("Invalid Config");
       node.error("Invalid Input");
     }
 
@@ -74,12 +70,13 @@ module.exports = function(RED) {
     node.to = parseTime(node.to);
 
     node.on('input', function(msg) {
-      var inp = dateUtil.parseDateInput(node, msg, node.inputType, node.input,
-        node.inTz);
+      var inp = dateUtil.parseDateInput(
+        node, msg, node.inputType, node.input, node.inTz);
+
       var ch = inp.hour();
       var cm = inp.minute();
-      var toSec = ch * 3600 + cm * 60 + inp.second();
 
+      var toSec = ch * 3600 + cm * 60 + inp.second();
       var sTime = (ch < 10 ? "0" + ch : ch) + ":" + (cm < 10 ? "0" + cm :
         cm);
       var pass = false;
@@ -98,19 +95,10 @@ module.exports = function(RED) {
       }
 
       if (pass) {
-        node.status({
-          fill: 'green',
-          shape: 'ring',
-          text: sTime
-        });
+        util.statusOk(node, sTime);
         node.send(msg);
       } else {
-        // not within bounds - do nothing
-        node.status({
-          fill: 'red',
-          shape: 'dot',
-          text: sTime
-        });
+        util.statusFail(node, sTime);
         node.send(null);
       }
     });
@@ -120,8 +108,6 @@ module.exports = function(RED) {
     });
   }
 
-  // Register the node by name. This must be called before overriding any of the
-  // Node functions.
+  // !Register
   RED.nodes.registerType("time-pass", TimePassNode);
-
 };

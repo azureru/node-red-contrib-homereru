@@ -2,9 +2,9 @@ module.exports = function(RED) {
     "use strict";
 
     var fs = require('fs');
+    var util = require('../lib/util.js');
 
     function FilePassNode(config) {
-        // Create a RED node
         RED.nodes.createNode(this, config);
 
         var node = this;
@@ -14,39 +14,22 @@ module.exports = function(RED) {
 
         node.on('input', function (msg) {
             var inp = '';
-            try {
-              switch ( node.inputType ) {
-                case 'msg':
-                  inp = RED.util.getMessageProperty(msg, node.input);
-                  break;
-                case 'flow':
-                  inp = node.context().flow.get(node.input);
-                  break;
-                case 'global':
-                  inp = node.context().global.get(node.input);
-                  break;
-                case 'str':
-                  inp = node.input;
-                  break;
-                default:
-                  inp = node.input;
-              }
-            } catch (err) {
-              inp = node.input;
-              node.warn('Input property, ' + node.inputType + '.' + node.input + ', does NOT exist.');
-            }
+
+            inp = util.parseMsg(RED, node, node.inputType, node.input, msg);
 
             // normalize the path by removing whitespaces on the left and right
             inp = inp.replace(/\s+$/,'');
             inp = inp.replace(/^\s+/,'');
 
             node.status({});
+
+            // check if file exists
             fs.access(inp, fs.F_OK || fs.R_OK , function(err) {
                 if (err) {
-                    node.status({fill: 'red', shape: 'dot', text: 'Not Exists'});
+                    util.statusFail(node, 'Not Exists');
                     node.send(null);
                 } else {
-                    node.status({fill: 'green', shape: 'ring', text: 'Exists'});
+                    util.statusOk(node, 'Exists');
                     node.send(msg);
                 }
             });
@@ -57,8 +40,6 @@ module.exports = function(RED) {
         });
     }
 
-    // Register the node by name. This must be called before overriding any of the
-    // Node functions.
+    // !Register
     RED.nodes.registerType("file-pass", FilePassNode);
-
 };

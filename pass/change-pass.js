@@ -9,16 +9,7 @@ module.exports = function(RED) {
     var node = this;
 
     this.rateUnits = config.rateUnits;
-
-    if (config.rateUnits === "minute") {
-      this.rate = (60 * 1000) * config.rate;
-    } else if (config.rateUnits === "hour") {
-      this.rate = (60 * 60 * 1000) * config.rate;
-    } else if (config.rateUnits === "day") {
-      this.rate = (24 * 60 * 60 * 1000) * config.rate;
-    } else { // Default to seconds
-      this.rate = 1000 * config.rate;
-    }
+    this.rate = util.parseTimeUnit(config.rate, config.rateUnits);
 
     node.intervalId = -1;
     node.input = config.input || 'payload'; // where to take the input from
@@ -33,13 +24,14 @@ module.exports = function(RED) {
 
       var pass = false;
       var value = inp;
-      // only pass if there's changes
+
+      // check `pass` logic based on delta of value-previousValue
       if (value != node.previousValue) {
         pass = true;
         node.previousValue = value;
       }
 
-      // no interval specified yet - create interval to reset
+      // no interval specified yet - create interval to reset cache
       if (node.intervalId === -1) {
         if (node.rate != 0) {
           node.intervalId = setInterval(function() {
@@ -54,7 +46,11 @@ module.exports = function(RED) {
           // on logic mode - we always pass the value
           // but we add flag to msg to indicate the logic state
           msg.logic = (pass) ? 1 : 0;
-          util.statusOk(node, msg.logic);
+          if (pass) {
+            util.statusOk(node, msg.logic);
+          } else {
+            util.statusFail(node, msg.logic);
+          }
           node.send(msg);
           return;
       }
@@ -72,12 +68,12 @@ module.exports = function(RED) {
     });
 
     this.on("close", function() {
-      // clean
       node.status({});
       clearInterval(node.intervalId);
       node.intervalId = -1;
     });
   }
 
+  // !Register
   RED.nodes.registerType("change-pass", ChangePassNode);
 };

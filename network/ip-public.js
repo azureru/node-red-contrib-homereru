@@ -2,10 +2,9 @@ module.exports = function(RED) {
   "use strict";
 
   var request = require('request');
+  var util = require('../lib/util.js');
 
-  // The main node definition - most things happen in here
   function IpNode(config) {
-    // Create a RED node
     RED.nodes.createNode(this, config);
 
     var node = this;
@@ -16,14 +15,11 @@ module.exports = function(RED) {
         payload: ""
       };
 
+      // send request to akamai to get public `ip`
       request(checkUrl, function(error, response, body) {
         if (!error && response.statusCode == 200) {
           var ip = body;
-          node.status({
-            fill: "green",
-            shape: "dot",
-            text: ip
-          });
+          util.statusOk(ip);
           msg.payload = ip;
           node.send(msg);
         } else {
@@ -39,8 +35,6 @@ module.exports = function(RED) {
     });
   }
 
-  // Register the node by name. This must be called before overriding any of the
-  // Node functions.
+  // !Register
   RED.nodes.registerType("ip-public", IpNode);
-
 };

@@ -5,6 +5,8 @@
 module.exports = function(RED) {
     "use strict";
 
+    var util = require('../lib/util.js');
+
     var moment      = require('moment-timezone');
     var osLocale    = require('os-locale');
     var hostTz      = moment.tz.guess();
@@ -162,7 +164,7 @@ module.exports = function(RED) {
           }
 
           // Send the output message
-          node.status({fill:"green",shape:"dot",text: inp.format("YYYY-MM-DD HH:mm Z")});
+          util.statusOk(inp.format("YYYY-MM-DD HH:mm Z"));
           node.send(outputMsg);
         });
     }

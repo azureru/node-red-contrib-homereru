@@ -6,26 +6,28 @@
 module.exports = function(RED) {
   "use strict";
 
+  var util = require('../lib/util.js');
+
   var MILLIS_TO_NANOS = 1000000;
   var SECONDS_TO_NANOS = 1000000000;
   var _ = require('underscore');
 
-  function HmrLimitNode(n) {
-    RED.nodes.createNode(this, n);
+  function HmrLimitNode(config) {
+    RED.nodes.createNode(this, config);
 
-    this.rateUnits = n.rateUnits;
-
-    if (n.rateUnits === "minute") {
-      this.rate = (60 * 1000) / n.rate;
-    } else if (n.rateUnits === "hour") {
-      this.rate = (60 * 60 * 1000) / n.rate;
-    } else if (n.rateUnits === "day") {
-      this.rate = (24 * 60 * 60 * 1000) / n.rate;
+    // rate is in interval / how many (e.g. 2 messages / second = 1000 / 2)
+    this.rateUnits = config.rateUnits;
+    if (config.rateUnits === "minute") {
+      this.rate = (60 * 1000) / config.rate;
+    } else if (config.rateUnits === "hour") {
+      this.rate = (60 * 60 * 1000) / config.rate;
+    } else if (config.rateUnits === "day") {
+      this.rate = (24 * 60 * 60 * 1000) / config.rate;
     } else { // Default to seconds
-      this.rate = 1000 / n.rate;
+      this.rate = 1000 / config.rate;
     }
 
-    this.name = n.name;
+    this.name = config.name;
     this.idList = [];
     this.buffer = [];
     this.intervalID = -1;
@@ -34,8 +36,9 @@ module.exports = function(RED) {
 
     this.on("input", function(msg) {
 
-      /* Check if there is a buffer and there has been a different earlier in the queue that differs from incloming
-      and if that is the case, simply drop that message */
+      /* Check if there is a buffer and there has been a different
+         earlier in the queue that differs from incloming
+         and if that is the case, simply drop that message */
       if (node.buffer.length > 0) {
         do {
           var foundIndex = _.findIndex(node.buffer, function(obj) {
@@ -51,23 +54,16 @@ module.exports = function(RED) {
             if (node.buffer.length === 0) {
               node.status({});
             } else {
-              node.status({
-                text: node.buffer.length
-              });
+              util.statusProgress(node, node.buffer.length);
             }
           }
-
         } while (foundIndex !== -1 && node.buffer.length > 0);
       }
 
       //Same as in the delay node
       if (node.intervalID !== -1) {
         node.buffer.push(msg);
-        if (node.buffer.length > 0) {
-          node.status({
-            text: node.buffer.length
-          });
-        }
+        util.statusProgress(node, node.buffer.length);
         if (node.buffer.length > 1000) {
           node.warn(this.name + " " + RED._("delay.error.buffer"));
         }
@@ -81,10 +77,8 @@ module.exports = function(RED) {
           }
 
           if (node.buffer.length > 0) {
-            node.send(node.buffer.shift());
-            node.status({
-              text: node.buffer.length
-            });
+            node.send(node, node.buffer.shift());
+            util.statusProgress(node, node.buffer.length);
           }
         }, node.rate);
       }
@@ -99,5 +93,7 @@ module.exports = function(RED) {
       node.lastSent = null;
     });
   }
+
+  // !Register
   RED.nodes.registerType("limit-pass", HmrLimitNode);
 }

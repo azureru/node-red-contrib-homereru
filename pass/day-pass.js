@@ -7,10 +7,9 @@ module.exports = function(RED) {
   "use strict";
 
   var dateUtil = require('../lib/date.js');
+  var util = require('../lib/util.js');
 
-  // The main node definition - most things happen in here
   function DayPassNode(config) {
-    // Create a RED node
     RED.nodes.createNode(this, config);
 
     var node = this;
@@ -29,8 +28,8 @@ module.exports = function(RED) {
 
     node.on('input', function(msg) {
 
-      var inp = dateUtil.parseDateInput(node, msg, node.inputType, node.input,
-        node.inTz);
+      var inp = dateUtil.parseDateInput(
+        node, msg, node.inputType, node.input, node.inTz);
       var day = inp.isoWeekday();
       var pass = false;
 
@@ -67,21 +66,13 @@ module.exports = function(RED) {
       }
 
       if (pass) {
-        node.status({
-          fill: 'green',
-          shape: 'ring',
-          text: sDay
-        });
+        util.statusOk(node, sDay);
         node.send(msg);
         return;
       }
 
       // not within bounds - do nothing
-      node.status({
-        fill: 'red',
-        shape: 'dot',
-        text: sDay
-      });
+      util.statusFail(node, sDay);
       node.send(null);
     });
 
@@ -90,8 +81,6 @@ module.exports = function(RED) {
     });
   }
 
-  // Register the node by name. This must be called before overriding any of the
-  // Node functions.
+  // !Register
   RED.nodes.registerType("day-pass", DayPassNode);
-
 };

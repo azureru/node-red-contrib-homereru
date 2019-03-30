@@ -1,8 +1,9 @@
 module.exports = function(RED) {
   "use strict";
 
+  var util = require('../lib/util.js');
+
   function RangePassNode(config) {
-    // Create a RED node
     RED.nodes.createNode(this, config);
 
     var node = this;
@@ -15,29 +16,9 @@ module.exports = function(RED) {
 
     node.on('input', function(msg) {
       var inp = '';
-      try {
-        switch (node.inputType) {
-          case 'msg':
-            inp = RED.util.getMessageProperty(msg, node.input);
-            break;
-          case 'flow':
-            inp = node.context().flow.get(node.input);
-            break;
-          case 'global':
-            inp = node.context().global.get(node.input);
-            break;
-          case 'str':
-            inp = node.input;
-            break;
-          default:
-            inp = node.input;
-        }
-      } catch (err) {
-        inp = node.input;
-        node.warn('Input property, ' + node.inputType + '.' + node.input +
-          ', does NOT exist.');
-      }
+      inp = util.parseMsg(RED, node, node.inputType, node.input, msg);
 
+      // since this is a range pass - always convert to integer
       var intVal = parseInt(inp);
 
       var pass = false;
@@ -46,21 +27,13 @@ module.exports = function(RED) {
       }
 
       if (pass) {
-        node.status({
-          fill: 'green',
-          shape: 'ring',
-          text: intVal
-        });
+        util.statusOk(node, intVal);
         node.send(msg);
         return;
       }
 
       // not within bounds - do nothing
-      node.status({
-        fill: 'red',
-        shape: 'dot',
-        text: intVal
-      });
+      util.statusFail(node, intVal);
       node.send(null);
     });
 
@@ -69,8 +42,6 @@ module.exports = function(RED) {
     });
   }
 
-  // Register the node by name. This must be called before overriding any of the
-  // Node functions.
+  // !Register
   RED.nodes.registerType("range-pass", RangePassNode);
-
 };

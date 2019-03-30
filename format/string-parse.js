@@ -2,9 +2,9 @@ module.exports = function(RED) {
     "use strict";
 
     var qs = require('querystring');
+    var util = require('../lib/util.js');
 
     function StringCommandNode(config) {
-        // Create a RED node
         RED.nodes.createNode(this, config);
 
         this.input = config.input || 'payload'; // where to take the input from
@@ -53,6 +53,7 @@ module.exports = function(RED) {
               node.warn('Input property, ' + node.inputType + '.' + node.input + ', does NOT exist. Output has been set to NOW.');
             }
           }
+          // since this is a string parse - always treat as string
           if (typeof inp === 'number') {
             inp = ''+ inp;
           }
@@ -120,5 +121,6 @@ module.exports = function(RED) {
         });
     }
 
+    // !Register
     RED.nodes.registerType("str-parse",StringCommandNode);
 }

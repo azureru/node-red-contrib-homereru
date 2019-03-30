@@ -16,19 +16,23 @@
 
 module.exports = function(RED) {
   "use strict";
+
   var http = require("follow-redirects").http;
   var https = require("follow-redirects").https;
   var urllib = require("url");
   var mustache = require("mustache");
   var querystring = require("querystring");
+  var util = require('../lib/util.js');
 
   function HTTPRequest(n) {
     RED.nodes.createNode(this, n);
+
     var node = this;
     var nodeUrl = n.url;
     var isTemplatedUrl = (nodeUrl || "").indexOf("{{") != -1;
     var nodeMethod = n.method || "GET";
     this.ret = n.ret || "txt";
+
     if (RED.settings.httpRequestTimeout) {
       this.reqTimeout = parseInt(RED.settings.httpRequestTimeout) || 120000;
     } else {
@@ -51,11 +55,8 @@ module.exports = function(RED) {
 
     this.on("input", function(msg) {
       var preRequestTimestamp = process.hrtime();
-      node.status({
-        fill: "blue",
-        shape: "dot",
-        text: "httpin.status.requesting"
-      });
+      util.statusProgress("httpin.status.requesting");
+
       var url = nodeUrl || msg.url;
       if (msg.url && nodeUrl && (nodeUrl !== msg.url)) {
         // revert change below when warning is finally removed
@@ -82,6 +83,7 @@ module.exports = function(RED) {
         // use the msg parameter
         method = msg.method.toUpperCase();
       }
+
       var opts = urllib.parse(url);
       opts.method = method;
       opts.headers = {};
@@ -112,13 +114,15 @@ module.exports = function(RED) {
         }
       }
       if (this.credentials && this.credentials.user) {
-        opts.auth = this.credentials.user + ":" + (this.credentials.password ||
-          "");
+        opts.auth =
+          this.credentials.user +
+          ":" +
+          (this.credentials.password || "");
       }
       var payload = null;
 
-      if (msg.payload && (method == "POST" || method == "PUT" || method ==
-          "PATCH")) {
+      if (msg.payload &&
+          (method == "POST" || method == "PUT" || method == "PATCH")) {
         if (typeof msg.payload === "string" || Buffer.isBuffer(msg.payload)) {
           payload = msg.payload;
         } else if (typeof msg.payload == "number") {
@@ -197,6 +201,7 @@ module.exports = function(RED) {
         res.on('data', function(chunk) {
           msg.payload += chunk;
         });
+
         res.on('end', function() {
           if (node.metric()) {
             // Calculate request time
@@ -209,6 +214,7 @@ module.exports = function(RED) {
               node.metric("size.bytes", msg, res.client.bytesRead);
             }
           }
+
           if (node.ret === "bin") {
             msg.payload = Buffer.from(msg.payload, "binary");
           } else if (node.ret === "obj") {
@@ -218,6 +224,7 @@ module.exports = function(RED) {
               node.warn(RED._("node-red:httpin.errors.json-error"));
             }
           }
+
           msg.authorized = res.socket.authorized;
           node.send(msg);
           node.status({});
@@ -228,11 +235,7 @@ module.exports = function(RED) {
         node.error(RED._(
           "node-red:common.notification.errors.no-response"), msg);
         setTimeout(function() {
-          node.status({
-            fill: "red",
-            shape: "ring",
-            text: "common.notification.errors.no-response"
-          });
+          util.statusFail("common.notification.errors.no-response");
         }, 10);
         req.abort();
       });
@@ -252,11 +255,7 @@ module.exports = function(RED) {
         msg.payload = err.toString() + " : " + url;
         msg.statusCode = err.code;
         node.send(msg);
-        node.status({
-          fill: "red",
-          shape: "ring",
-          text: err.code
-        });
+        util.statusFail(err.code);
       });
 
       if (payload) {
@@ -270,6 +269,7 @@ module.exports = function(RED) {
     });
   }
 
+  // !REGISTER
   RED.nodes.registerType("https eval", HTTPRequest, {
     credentials: {
       user: {
