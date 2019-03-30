@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="range-pass">
+<script data-template-name="range-pass" type="text/x-red">
     <!-- Input -->
     <div class="form-row">
         <label for="node-input-input"><i class="fa fa-arrow-left"></i> Input from</label>
@@ -21,6 +21,8 @@
         <label for="node-input-islogic">Is logic</label>
         <input type="checkbox" id="node-input-islogic">
     </div>
+
+
 </script>
 
 <script type="text/x-red" data-help-name="range-pass">
@@ -32,46 +34,48 @@
     When not checked, this node will only pass the <code>msg</code> to the next node only if the <code>input</code>
     is within range
     <p>
+
+
 </script>
 
 <!-- INIT -->
 <script type="text/javascript">
-    RED.nodes.registerType('range-pass',{
+    RED.nodes.registerType('range-pass', {
         category: 'hmr_pass',
         defaults: {
-            inputType  : {value:'msg'},
-            input      : {value:'payload'},
-            islogic    : {value:false},
+            inputType: {value: 'msg'},
+            input: {value: 'payload'},
+            islogic: {value: false},
 
-            from : {value:'0', required: true},
-            to   : {value:'100', required: true},
+            from: {value: '0', required: true},
+            to: {value: '100', required: true},
         },
-        color   : '#E9967A',
-        inputs  : 1,
-        outputs : 1,
-        icon    : "hmr_trackback.png",
+        color: '#E9967A',
+        inputs: 1,
+        outputs: 1,
+        icon: "hmr_trackback.png",
 
-        label: function() {
+        label: function () {
             var msg = '';
             msg = (this.from && this.to) ? (this.from + "-" + this.to) : "";
 
             // show user this is a logic pass
             if (this.islogic) {
-              msg = msg + ' →';
+                msg = msg + ' →';
             }
 
             return msg;
         },
 
-        oneditprepare: function() {
+        oneditprepare: function () {
             if (!this.inputType) {
-              this.inputType = 'msg';
+                this.inputType = 'msg';
             }
 
             $('#node-input-input').typedInput({
-              default   : 'msg',
-              types     : ['msg','flow','global','str'],
-              typeField : $('#node-input-inputType')
+                default: 'msg',
+                types: ['msg', 'flow', 'global', 'str'],
+                typeField: $('#node-input-inputType')
             });
         }
     });

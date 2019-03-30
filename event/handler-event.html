@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="handler-event">
+<script data-template-name="handler-event" type="text/x-red">
     <div class="form-row">
         <label for="node-input-config"><i class="fa fa-bookmark"></i> Config</label>
         <input type="text" id="node-input-config">
@@ -29,7 +29,9 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
+
 </script>
+
 <script type="text/x-red" data-help-name="handler-event">
 <p>Evaluates rules based on the sources used and will output a message with the result of rule evaluation that is used by subsequent nodes.</p>
 <p>
@@ -38,134 +40,163 @@
 <p>If&nbsp;<strong>Use input</strong>&nbsp;is active then an inbound message will be used to forward with the<strong>&nbsp;enable flag&nbsp;</strong>unchanged if the rule is true or msg.payload.enabled = false if the rule is false. No other parameter will be changed from the inbound message.</p>
 <p>By default, the node will resend the message once a minute. If you want to disable this, check&nbsp;<strong>No repeat messages</strong>&nbsp;to avoid sending repeats of the message.</p>
 <p>Check&nbsp;<strong>No output delay</strong>&nbsp;to override the global delay value as specified in the&nbsp;<strong>Config</strong>.</p>
+
 </script>
+
 <script type="text/javascript">
     RED.nodes.registerType('handler-event', {
         color: "#E2D96E",
         category: 'hmr_event',
         defaults: {
             config: {type: "config-event", required: true},
-            name: {value:""},
-            rules: {value:[{t:"eq", v:""}]},
-            checkall: {value:"true", required:true},
-            inputson: {value: false, required:true},
-            outputdelay: {value: false, required:true},
+            name: {value: ""},
+            rules: {value: [{t: "eq", v: ""}]},
+            checkall: {value: "true", required: true},
+            inputson: {value: false, required: true},
+            outputdelay: {value: false, required: true},
             disablerepeat: {value: false, required: false},
             inputs: {value: 0} //Storing if inputs is enabled. To be able to copy the node.
         },
         inputs: 0,
         outputs: 1,
         icon: "fa-question-circle.png",
-        label: function() {
+        label: function () {
             return (this.name || "undefined");
         },
-        oneditprepare: function() {
+        oneditprepare: function () {
             var operators = [
-                {v:"eq",t:"=="},
-                {v:"neq",t:"!="},
-                {v:"lt",t:"<"},
-                {v:"lte",t:"<="},
-                {v:"gt",t:">"},
-                {v:"gte",t:">="},
-                {v:"btwn",t:"is between"},
-                {v:"cont",t:"contains"},
-                {v:"regex",t:"matches regex"},
-                {v:"true",t:"is true"},
-                {v:"false",t:"is false"},
-                {v:"null",t:"is null"},
-                {v:"nnull",t:"is not null"}
+                {v: "eq", t: "=="},
+                {v: "neq", t: "!="},
+                {v: "lt", t: "<"},
+                {v: "lte", t: "<="},
+                {v: "gt", t: ">"},
+                {v: "gte", t: ">="},
+                {v: "btwn", t: "is between"},
+                {v: "cont", t: "contains"},
+                {v: "regex", t: "matches regex"},
+                {v: "true", t: "is true"},
+                {v: "false", t: "is false"},
+                {v: "null", t: "is null"},
+                {v: "nnull", t: "is not null"}
             ];
 
             //get all conf nodes
             var sourceAllList = [];
-            RED.nodes.eachNode(function(cf){
-                if (cf.type==="source-event"){
+            RED.nodes.eachNode(function (cf) {
+                if (cf.type === "source-event") {
                     sourceAllList.push(cf);
                 }
             });
 
             //if there are no sources, prompt to add first
-            if(sourceAllList.length===0){
+            if (sourceAllList.length === 0) {
                 $("<li>First add sources</li>").appendTo("#node-input-rule-container");
                 $("#node-input-add-rule").hide();
                 return;
             }
 
-            var generateRule = function(i, rule){
-                var container = $('<li/>',{style:"background: #fff; margin:0; padding:8px 0px; border-bottom: 1px solid #ccc;"});
+            var generateRule = function (i, rule) {
+                var container = $('<li/>', {style: "background: #fff; margin:0; padding:8px 0px; border-bottom: 1px solid #ccc;"});
                 var row = $('<div/>').appendTo(container);
 
                 //Add sources
-                var selectSource = $('<select/>',{class:"node-input-rule-source", style:"width:120px; margin-left: 5px; text-align: left;"}).appendTo(row);
+                var selectSource = $('<select/>', {
+                    class: "node-input-rule-source",
+                    style: "width:120px; margin-left: 5px; text-align: left;"
+                }).appendTo(row);
                 for (var d in sourceAllList) {
                     selectSource.append($("<option></option>").val(sourceAllList[d].uid).text(sourceAllList[d].name));
                 }
                 //Add compare
-                var selectField = $('<select/>',{class:"node-input-rule-compare", style:"width:120px; margin-left: 5px; text-align: center;"}).appendTo(row);
+                var selectField = $('<select/>', {
+                    class: "node-input-rule-compare",
+                    style: "width:120px; margin-left: 5px; text-align: center;"
+                }).appendTo(row);
                 for (var d in operators) {
                     selectField.append($("<option></option>").val(operators[d].v).text(operators[d].t));
                 }
 
                 //Function for showing source select
                 var srcPrefix = '[src:]';
-                var addSelectSourceField = function(target, value = null){
+                var addSelectSourceField = function (target, value = null) {
                     target.hide()
-                    var valueFieldS = $('<select/>',{class:"node-input-rule-value-source", style:"width:120px; margin-left: 5px; text-align: left;"}).insertAfter(target);
+                    var valueFieldS = $('<select/>', {
+                        class: "node-input-rule-value-source",
+                        style: "width:120px; margin-left: 5px; text-align: left;"
+                    }).insertAfter(target);
                     valueFieldS.append($("<option></option>").val('').text(''));
                     valueFieldS.append($("<option></option>").val('return').text('Return'));
                     for (var d in sourceAllList) {
                         valueFieldS.append($("<option></option>").val(sourceAllList[d].uid).text(sourceAllList[d].name));
                     }
                     //If value is passed, find the correct option
-                    if (value){
+                    if (value) {
                         //remove prefix
                         value = value.substr(srcPrefix.length);
-                        valueFieldS.find("option").filter(function() {return $(this).val() == value;}).attr('selected',true);
+                        valueFieldS.find("option").filter(function () {
+                            return $(this).val() == value;
+                        }).attr('selected', true);
                     }
-                    valueFieldS.change(function(){
+                    valueFieldS.change(function () {
                         var val = valueFieldS.children("option:selected").val();
-                        if (val == 'return'){
+                        if (val == 'return') {
                             target.val('');         //Clear the value field
                             target.show();
                             valueFieldS.remove();   //Delete select field
                         } else {
-                            target.val(srcPrefix+val);  //Save the selected option to value field
+                            target.val(srcPrefix + val);  //Save the selected option to value field
                         }
                     });
                 }
                 //For onchange event to modify box. Reacts on [space]
-                var addSelectSourceFieldEvent = function(evt){
+                var addSelectSourceFieldEvent = function (evt) {
                     var target = $(evt.target);
-                    if (target.val().indexOf(' ') == 0){
+                    if (target.val().indexOf(' ') == 0) {
                         addSelectSourceField(target);
                     }
                 }
 
                 //Add values
                 var valueDiv = $('<span/>').appendTo(row);
-                var valueField = $('<input/>',{class:"node-input-rule-value",type:"text",style:"margin-left: 5px; width: 145px;"}).appendTo(valueDiv).on('keyup', addSelectSourceFieldEvent);
+                var valueField = $('<input/>', {
+                    class: "node-input-rule-value",
+                    type: "text",
+                    style: "margin-left: 5px; width: 145px;"
+                }).appendTo(valueDiv).on('keyup', addSelectSourceFieldEvent);
 
                 var btwnField = $('<span/>').appendTo(row);
-                var btwnValueField = $('<input/>',{class:"node-input-rule-btwn-value",type:"text",style:"margin-left: 5px; width: 50px;"}).appendTo(btwnField).on('keyup', addSelectSourceFieldEvent);
+                var btwnValueField = $('<input/>', {
+                    class: "node-input-rule-btwn-value",
+                    type: "text",
+                    style: "margin-left: 5px; width: 50px;"
+                }).appendTo(btwnField).on('keyup', addSelectSourceFieldEvent);
                 btwnField.append(" and ");
-                var btwnValue2Field = $('<input/>',{class:"node-input-rule-btwn-value2",type:"text",style:"width: 50px;margin-left:2px;"}).appendTo(btwnField).on('keyup', addSelectSourceFieldEvent);
+                var btwnValue2Field = $('<input/>', {
+                    class: "node-input-rule-btwn-value2",
+                    type: "text",
+                    style: "width: 50px;margin-left:2px;"
+                }).appendTo(btwnField).on('keyup', addSelectSourceFieldEvent);
 
-                var finalspan = $('<span/>',{style:"float: right; margin-top: 3px;margin-right: 10px;"}).appendTo(row);
+                var finalspan = $('<span/>', {style: "float: right; margin-top: 3px;margin-right: 10px;"}).appendTo(row);
                 finalspan.append(' ');
 
                 //Add deletebutton
-                var deleteButton = $('<a/>',{href:"#",class:"btn btn-mini", style:"margin-left: 5px;"}).appendTo(finalspan);
-                $('<i/>',{class:"fa fa-remove"}).appendTo(deleteButton);
+                var deleteButton = $('<a/>', {
+                    href: "#",
+                    class: "btn btn-mini",
+                    style: "margin-left: 5px;"
+                }).appendTo(finalspan);
+                $('<i/>', {class: "fa fa-remove"}).appendTo(deleteButton);
 
                 //Add action on selectfield
-                selectField.change(function() {
+                selectField.change(function () {
                     var type = selectField.children("option:selected").val();
                     if (type.length < 4) {
-                        selectField.css({"width":"60px"});
+                        selectField.css({"width": "60px"});
                     } else if (type === "regex") {
-                        selectField.css({"width":"147px"});
+                        selectField.css({"width": "147px"});
                     } else {
-                        selectField.css({"width":"120px"});
+                        selectField.css({"width": "120px"});
                     }
                     if (type === "btwn") {
                         valueDiv.hide();
@@ -181,12 +212,12 @@
                 });
 
                 //Delete
-                deleteButton.click(function() {
-                    container.css({"background":"#fee"});
-                    container.fadeOut(300, function() {
+                deleteButton.click(function () {
+                    container.css({"background": "#fee"});
+                    container.fadeOut(300, function () {
                         $(this).remove();
-                        $("#node-input-rule-container").children().each(function(i) {
-                            $(this).find(".node-input-rule-index").html(i+1);
+                        $("#node-input-rule-container").children().each(function (i) {
+                            $(this).find(".node-input-rule-index").html(i + 1);
                         });
 
                     });
@@ -196,20 +227,24 @@
                 $("#node-input-rule-container").append(container);
 
                 //Update active select
-                selectSource.find("option").filter(function() {return $(this).val() == rule.s;}).attr('selected',true); //Compare rule.s (source) with option
-                selectField.find("option").filter(function() {return $(this).val() == rule.t;}).attr('selected',true);  //Compare rule.t (type) with option
+                selectSource.find("option").filter(function () {
+                    return $(this).val() == rule.s;
+                }).attr('selected', true); //Compare rule.s (source) with option
+                selectField.find("option").filter(function () {
+                    return $(this).val() == rule.t;
+                }).attr('selected', true);  //Compare rule.t (type) with option
                 if (rule.t == "btwn") {
                     btwnValueField.val(rule.v);
-                    if (btwnValueField.val().indexOf(srcPrefix) === 0){
+                    if (btwnValueField.val().indexOf(srcPrefix) === 0) {
                         addSelectSourceField(btwnValueField, btwnValueField.val());
                     }
                     btwnValue2Field.val(rule.v2);
-                    if (btwnValue2Field.val().indexOf(srcPrefix) === 0){
+                    if (btwnValue2Field.val().indexOf(srcPrefix) === 0) {
                         addSelectSourceField(btwnValue2Field, btwnValue2Field.val());
                     }
                 } else if (typeof rule.v != "undefined") {
                     valueField.val(rule.v);
-                    if (valueField.val().indexOf(srcPrefix) === 0){
+                    if (valueField.val().indexOf(srcPrefix) === 0) {
                         addSelectSourceField(valueField, valueField.val());
                     }
                 }
@@ -217,37 +252,37 @@
             }
 
             //Add action to the button for generating a new evaluation
-            $("#node-input-add-rule").click(function() {
-                generateRule($("#node-input-rule-container").children().length+1,{s:"", t:"",v:"",v2:""});
+            $("#node-input-add-rule").click(function () {
+                generateRule($("#node-input-rule-container").children().length + 1, {s: "", t: "", v: "", v2: ""});
                 $("#node-input-rule-container-div").scrollTop($("#node-input-rule-container-div").get(0).scrollHeight);
             });
 
             //Generate all saved rules
-            for (var i=0;i<this.rules.length;i++) {
+            for (var i = 0; i < this.rules.length; i++) {
                 var rule = this.rules[i];
-                generateRule(i+1,rule);
+                generateRule(i + 1, rule);
             }
         },
-        oneditsave: function() {
-            if ($("#node-input-inputson").is(":checked")){
-                this.inputs=1;
+        oneditsave: function () {
+            if ($("#node-input-inputson").is(":checked")) {
+                this.inputs = 1;
             } else {
-                this.inputs=0;
+                this.inputs = 0;
             }
             var rules = $("#node-input-rule-container").children();
             var ruleset;
             var node = this;
-            node.rules= [];
-            rules.each(function(i) {
+            node.rules = [];
+            rules.each(function (i) {
                 var rule = $(this);
                 var ruleSource = rule.find(".node-input-rule-source option:selected");
                 var source = ruleSource.val();
                 var name = ruleSource.text();
                 var type = rule.find(".node-input-rule-compare option:selected").val();
                 var r = {
-                  n:name,
-                  s:source,
-                  t:type
+                    n: name,
+                    s: source,
+                    t: type
                 };
                 if (!(type === "true" || type === "false" || type === "null" || type === "nnull" || type === "else")) {
                     if (type === "btwn") {

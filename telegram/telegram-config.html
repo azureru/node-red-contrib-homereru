@@ -1,18 +1,17 @@
 <script type="text/javascript">
-	RED.nodes.registerType('telegram-config', {
-		category: 'config',
-		defaults: {
-		},
-		credentials: {
-			secret: {
-				type: 'text',
-				required: true
-			}
-		},
-		label: function () {
-			return 'telegram-config';
-		}
-	});
+    RED.nodes.registerType('telegram-config', {
+        category: 'config',
+        defaults: {},
+        credentials: {
+            secret: {
+                type: 'text',
+                required: true
+            }
+        },
+        label: function () {
+            return 'telegram-config';
+        }
+    });
 </script>
 
 <script type="text/x-red" data-template-name="telegram-config">
@@ -20,8 +19,12 @@
 		<label for="node-config-input-secret"><i class="icon-bookmark"></i> Secret</label>
 		<input type="text" id="node-config-input-secret">
 	</div>
+
+
 </script>
 
 <script type="text/x-red" data-help-name="telegram-config">
     <p>A configuration node that holds the secret token of Telegram client</p>
+
+
 </script>

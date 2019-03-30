@@ -2,7 +2,7 @@
   The idea is based on limit-pass
   But this node is for generic use
 -->
-<script type="text/x-red" data-template-name="limit-pass">
+<script data-template-name="limit-pass" type="text/x-red">
     <div id="rate-details" class="form-row">
         <label for="node-input-rate"><i class="fa fa-clock-o"></i> Rate</label>
         <input type="text" id="node-input-rate" placeholder="1" style="direction:rtl; width:30px !important">
@@ -18,6 +18,8 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" >
     </div>
+
+
 </script>
 
 <script type="text/x-red" data-help-name="limit-pass">
@@ -29,26 +31,28 @@
     that will send the actions to the hardware device</p>
     <p>Just make sure msg.payload is a simple value that can be compared with == operator</p>
     <p>Default rate limit of 30 msg/minute.</p>
+
+
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('limit-pass',{
+    RED.nodes.registerType('limit-pass', {
         category: 'hmr_pass',      // the palette category
-        color:"#E9967A",
+        color: "#E9967A",
         defaults: {             // defines the editable properties of the node
-            name: {value:""},   //  along with default values.
-            rate: {value:"1", required:true, validate:RED.validators.number()},
+            name: {value: ""},   //  along with default values.
+            rate: {value: "1", required: true, validate: RED.validators.number()},
             rateUnits: {value: "minute"}
         },
-        inputs:1,                // set the number of inputs - only 0 or 1
-        outputs:1,               // set the number of outputs - 0 to n
+        inputs: 1,                // set the number of inputs - only 0 or 1
+        outputs: 1,               // set the number of outputs - 0 to n
         icon: "hmr_seconds.png",    // set the icon (held in public/icons)
-        label: function() {      // sets the default label contents
-              var units = this.rateUnits ? this.rateUnits.charAt(0) : "s";
-              return this.name|| "limit "+this.rate+" msg/"+units;
+        label: function () {      // sets the default label contents
+            var units = this.rateUnits ? this.rateUnits.charAt(0) : "s";
+            return this.name || "limit " + this.rate + " msg/" + units;
         },
-        oneditprepare: function() {
-          $( "#node-input-rate" ).spinner({min:1});
+        oneditprepare: function () {
+            $("#node-input-rate").spinner({min: 1});
         }
     });
 </script>

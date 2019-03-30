@@ -14,7 +14,7 @@
   limitations under the License.
 -->
 
-<script type="text/x-red" data-template-name="https eval">
+<script data-template-name="https eval" type="text/x-red">
     <div class="form-row">
         <label for="node-input-method">
             <i class="fa fa-tasks"></i> <span data-i18n="node-red:httpin.label.method"></span></label>
@@ -59,6 +59,8 @@
         <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name">
     </div>
     <div class="form-tips" id="tip-json" hidden><span data-i18n="node-red:httpin.tip.req"></span></div>
+
+
 </script>
 
 <script type="text/x-red" data-help-name="https eval">
@@ -106,33 +108,35 @@
     <p>
         <b>Note</b>: If you need to configure a proxy please add <b>http_proxy=...</b> to your environment variables and restart Node-RED.
     </p>
+
+
 </script>
 
 <script type="text/javascript">
     RED.nodes.registerType('https eval', {
-        category :"hmr_network",
-        color    :"#3FADB5",
+        category: "hmr_network",
+        color: "#3FADB5",
         defaults: {
-            name   : {value:""},
-            method : {value:"GET"},
-            ret    : {value:"txt"},
-            url    : {value:""}
+            name: {value: ""},
+            method: {value: "GET"},
+            ret: {value: "txt"},
+            url: {value: ""}
         },
         credentials: {
-            user     : {type:"text"},
-            password : {type: "password"}
+            user: {type: "text"},
+            password: {type: "password"}
         },
-        inputs  :1,
-        outputs :1,
-        icon    : "white-globe.png",
-        label: function() {
+        inputs: 1,
+        outputs: 1,
+        icon: "white-globe.png",
+        label: function () {
             return this.name || "https eval";
         },
-        labelStyle: function() {
+        labelStyle: function () {
             return this.name ? "node_label_italic" : "";
         },
-        oneditprepare: function() {
-            $("#node-input-useAuth").change(function() {
+        oneditprepare: function () {
+            $("#node-input-useAuth").change(function () {
                 if ($(this).is(":checked")) {
                     $(".node-input-useAuth-row").show();
                 } else {
@@ -148,7 +152,7 @@
             }
             $("#node-input-useAuth").change();
 
-            $("#node-input-ret").change(function() {
+            $("#node-input-ret").change(function () {
                 if ($("#node-input-ret").val() === "obj") {
                     $("#tip-json").show();
                 } else {
@@ -156,7 +160,7 @@
                 }
             });
         },
-        oneditsave: function() {
+        oneditsave: function () {
             // ...
         }
     });

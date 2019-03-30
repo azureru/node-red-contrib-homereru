@@ -4,7 +4,7 @@ Apache 2 License with minor adjustment
 -->
 
 <!-- DIALOG -->
-<script type="text/x-red" data-template-name="day-pass">
+<script data-template-name="day-pass" type="text/x-red">
     <!-- Input -->
     <div class="form-row">
         <label for="node-input-input"><i class="fa fa-arrow-left"></i> Input from</label>
@@ -42,6 +42,8 @@ Apache 2 License with minor adjustment
         <label for="node-input-islogic">Is logic</label>
         <input type="checkbox" id="node-input-islogic">
     </div>
+
+
 </script>
 
 <!-- HELP -->
@@ -66,34 +68,36 @@ Apache 2 License with minor adjustment
     When not checked, this node will only pass the <code>msg</code> to the next node only if the <code>input</code>
     is within range
     <p>
+
+
 </script>
 
 <!-- INIT -->
 <script type="text/javascript">
-    RED.nodes.registerType('day-pass',{
+    RED.nodes.registerType('day-pass', {
         category: 'hmr_pass',
         defaults: {
-            inTz : {value : ''},
+            inTz: {value: ''},
 
-            inputType  : {value:'date'},
-            input      : {value:''},
+            inputType: {value: 'date'},
+            input: {value: ''},
 
-            islogic    : {value:false},
+            islogic: {value: false},
 
-            d1   : {value:true},
-            d2   : {value:true},
-            d3   : {value:true},
-            d4   : {value:true},
-            d5   : {value:true},
-            d6   : {value:true},
-            d7   : {value:true},
+            d1: {value: true},
+            d2: {value: true},
+            d3: {value: true},
+            d4: {value: true},
+            d5: {value: true},
+            d6: {value: true},
+            d7: {value: true},
         },
-        color   : '#E9967A',
-        inputs  : 1,
-        outputs : 1,
-        icon    : "hmr_trackback.png",
+        color: '#E9967A',
+        inputs: 1,
+        outputs: 1,
+        icon: "hmr_trackback.png",
 
-        label: function() {
+        label: function () {
             var msg = '';
             var label = [];
             if (this.d1) {
@@ -121,26 +125,26 @@ Apache 2 License with minor adjustment
 
             // show user this is a logic pass
             if (this.islogic) {
-              msg = msg + ' →';
+                msg = msg + ' →';
             }
 
             return msg;
         },
 
-        oneditprepare: function() {
+        oneditprepare: function () {
             if (!this.inputType) {
-              this.inputType = 'date';
+                this.inputType = 'date';
             }
 
             $('#node-input-input').typedInput({
-              default   : 'msg',
-              types     : ['msg','flow','global','date'],
-              typeField : $('#node-input-inputType')
+                default: 'msg',
+                types: ['msg', 'flow', 'global', 'date'],
+                typeField: $('#node-input-inputType')
             });
 
             // use api to get TZs
-            $.getJSON('hmr-api/moment',function(data) {
-              if ( $('#node-input-inTz').val() === '' ) $('#node-input-inTz').val(data.tz);
+            $.getJSON('hmr-api/moment', function (data) {
+                if ($('#node-input-inTz').val() === '') $('#node-input-inTz').val(data.tz);
             });
         }
     });

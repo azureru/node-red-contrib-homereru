@@ -4,7 +4,7 @@
 -->
 
 <!-- DIALOG -->
-<script type="text/x-red" data-template-name="time-pass">
+<script data-template-name="time-pass" type="text/x-red">
     <!-- Input -->
     <div class="form-row">
         <label for="node-input-input"><i class="fa fa-arrow-left"></i> Input from</label>
@@ -33,6 +33,8 @@
         <label for="node-input-islogic">Is logic</label>
         <input type="checkbox" id="node-input-islogic">
     </div>
+
+
 </script>
 
 <!-- HELP -->
@@ -59,6 +61,8 @@
     When not checked, this node will only pass the <code>msg</code> to the next node only if the <code>input</code>
     is within range
     <p>
+
+
 </script>
 
 <!-- INIT -->
@@ -104,37 +108,37 @@
         return (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m);
     }
 
-    RED.nodes.registerType('time-pass',{
+    RED.nodes.registerType('time-pass', {
         category: 'hmr_pass',
         defaults: {
-            inTz : {value : ''},
+            inTz: {value: ''},
 
-            inputType  : {value:'date'},
-            input      : {value:''},
+            inputType: {value: 'date'},
+            input: {value: ''},
 
-            islogic    : {value:false},
+            islogic: {value: false},
 
-            from : {value:'00:00', required: true, validate: validateTime},
-            to   : {value:'23:59', required: true, validate: validateTime},
+            from: {value: '00:00', required: true, validate: validateTime},
+            to: {value: '23:59', required: true, validate: validateTime},
         },
-        color   : '#E9967A',
-        inputs  : 1,
-        outputs : 1,
-        icon    : "hmr_trackback.png",
+        color: '#E9967A',
+        inputs: 1,
+        outputs: 1,
+        icon: "hmr_trackback.png",
 
-        label: function() {
+        label: function () {
             var msg = '';
             msg = (this.from && this.to) ? (this.from + "-" + this.to) : "";
 
             // show user this is a logic pass
             if (this.islogic) {
-              msg = msg + ' →';
+                msg = msg + ' →';
             }
 
             return msg;
         },
 
-        oneditsave: function() {
+        oneditsave: function () {
             var nodeFrom = $("#node-input-from");
             var nodeTo = $("#node-input-to");
             var from = nodeFrom.val();
@@ -153,19 +157,19 @@
             }
         },
 
-        oneditprepare: function() {
+        oneditprepare: function () {
             if (!this.inputType) {
-              this.inputType = 'date';
+                this.inputType = 'date';
             }
 
             $('#node-input-input').typedInput({
-              default   : 'msg',
-              types     : ['msg','flow','global','date'],
-              typeField : $('#node-input-inputType')
+                default: 'msg',
+                types: ['msg', 'flow', 'global', 'date'],
+                typeField: $('#node-input-inputType')
             });
 
-            $.getJSON('hmr-api/moment',function(data) {
-              if ( $('#node-input-inTz').val() === '' ) $('#node-input-inTz').val(data.tz);
+            $.getJSON('hmr-api/moment', function (data) {
+                if ($('#node-input-inTz').val() === '') $('#node-input-inTz').val(data.tz);
             });
         }
     });

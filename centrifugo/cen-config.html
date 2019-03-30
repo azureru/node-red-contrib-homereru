@@ -1,30 +1,30 @@
 <script type="text/javascript">
-	RED.nodes.registerType('cen-config', {
-		category: 'config',
-		defaults: {
-			host: {
-				value: '',
-				required: true
-			},
-			user: {
-				value: '',
-				required: true
-			},
-			channel: {
-				value: '',
-				required: true
-			}
-		},
-		credentials: {
-			secret: {
-				type: 'text',
-				required: true
-			}
-		},
-		label: function () {
-			return this.host || 'cen-config';
-		}
-	});
+    RED.nodes.registerType('cen-config', {
+        category: 'config',
+        defaults: {
+            host: {
+                value: '',
+                required: true
+            },
+            user: {
+                value: '',
+                required: true
+            },
+            channel: {
+                value: '',
+                required: true
+            }
+        },
+        credentials: {
+            secret: {
+                type: 'text',
+                required: true
+            }
+        },
+        label: function () {
+            return this.host || 'cen-config';
+        }
+    });
 </script>
 
 <script type="text/x-red" data-template-name="cen-config">
@@ -44,6 +44,7 @@
 		<label for="node-config-input-secret"><i class="icon-bookmark"></i> Secret</label>
 		<input type="text" id="node-config-input-secret">
 	</div>
+
 </script>
 
 <script type="text/x-red" data-help-name="cen-config">

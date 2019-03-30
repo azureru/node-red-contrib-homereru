@@ -1,4 +1,4 @@
-module.exports = function(RED) {
+module.exports = function (RED) {
     "use strict";
 
     var fs = require('fs');
@@ -19,8 +19,8 @@ module.exports = function(RED) {
             inp = util.parseMsg(RED, node, node.inputType, node.input, msg);
 
             // normalize the path by removing whitespaces on the left and right
-            inp = inp.replace(/\s+$/,'');
-            inp = inp.replace(/^\s+/,'');
+            inp = inp.replace(/\s+$/, '');
+            inp = inp.replace(/^\s+/, '');
 
             node.status({});
 
@@ -28,7 +28,7 @@ module.exports = function(RED) {
             msg.passFilename = inp;
 
             // check if file exists
-            fs.access(inp, fs.F_OK || fs.R_OK , function(err) {
+            fs.access(inp, fs.F_OK || fs.R_OK, function (err) {
                 var pass = false;
                 if (err) {
                     pass = false;
@@ -37,9 +37,9 @@ module.exports = function(RED) {
                 }
 
                 if (pass) {
-                  util.statusOk(node, "Exists");
+                    util.statusOk(node, "Exists");
                 } else {
-                  util.statusFail(node, "Not Exists");
+                    util.statusFail(node, "Not Exists");
                 }
 
                 if (node.islogic) {
@@ -51,14 +51,14 @@ module.exports = function(RED) {
                 }
 
                 if (pass) {
-                  node.send(msg);
-                  return;
+                    node.send(msg);
+                    return;
                 }
                 node.send(null);
             });
         });
 
-        this.on("close", function() {
+        this.on("close", function () {
             node.status({});
         });
     }

@@ -1,5 +1,5 @@
 <!-- DIALOG -->
-<script type="text/x-red" data-template-name="change-pass">
+<script data-template-name="change-pass" type="text/x-red">
     <!-- Input -->
     <div class="form-row">
         <label for="node-input-input"><i class="fa fa-arrow-left"></i> Input from</label>
@@ -25,6 +25,8 @@
         <label for="node-input-islogic">Is logic</label>
         <input type="checkbox" id="node-input-islogic">
     </div>
+
+
 </script>
 
 <!-- HELP -->
@@ -41,50 +43,52 @@
     When not checked, this node will only pass the <code>msg</code> to the next node only if the <code>input</code>
     is changed from the previously recorded value
     <p>
+
+
 </script>
 
 <!-- INIT -->
 <script type="text/javascript">
-    RED.nodes.registerType('change-pass',{
+    RED.nodes.registerType('change-pass', {
         category: 'hmr_pass',
         defaults: {
-            inputType  : {value:'msg'},
-            input      : {value:'payload'},
-            islogic    : {value:false},
-            rate       : {value:"0"},
-            rateUnits  : {value: "minute"}
+            inputType: {value: 'msg'},
+            input: {value: 'payload'},
+            islogic: {value: false},
+            rate: {value: "0"},
+            rateUnits: {value: "minute"}
         },
-        color   : '#E9967A',
-        inputs  : 1,
-        outputs : 1,
-        icon    : "hmr_trackback.png",
+        color: '#E9967A',
+        inputs: 1,
+        outputs: 1,
+        icon: "hmr_trackback.png",
 
-        label: function() {
-          var msg = '';
-          // show the decay rate
-          if (this.rate == "0") {
-            msg = "Δ";
-          } else {
-            var units = this.rateUnits ? this.rateUnits.charAt(0) : "s";
-            msg = "Δ ("+this.rate+" "+units+")";
-          }
-          // show user this is a logic pass
-          if (this.islogic) {
-            msg = msg + ' →';
-          }
-          return msg;
+        label: function () {
+            var msg = '';
+            // show the decay rate
+            if (this.rate == "0") {
+                msg = "Δ";
+            } else {
+                var units = this.rateUnits ? this.rateUnits.charAt(0) : "s";
+                msg = "Δ (" + this.rate + " " + units + ")";
+            }
+            // show user this is a logic pass
+            if (this.islogic) {
+                msg = msg + ' →';
+            }
+            return msg;
         },
 
-        oneditprepare: function() {
+        oneditprepare: function () {
             if (!this.inputType) {
-              this.inputType = 'msg';
+                this.inputType = 'msg';
             }
 
-            $( "#node-input-rate" ).spinner({min:1});
+            $("#node-input-rate").spinner({min: 1});
             $('#node-input-input').typedInput({
-              default   : 'msg',
-              types     : ['msg','flow','global','str'],
-              typeField : $('#node-input-inputType')
+                default: 'msg',
+                types: ['msg', 'flow', 'global', 'str'],
+                typeField: $('#node-input-inputType')
             });
         }
     });

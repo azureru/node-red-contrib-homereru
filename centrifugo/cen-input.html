@@ -1,23 +1,23 @@
 <script type="text/javascript">
-RED.nodes.registerType('cen-input',{
-	category: 'hmr_centrifugo',
-	color: '#C0DEED',
-	outputs: 1,
-	defaults: {
-	   	server: {
-   		 	value:"",
-   		 	type:"cen-config",
-   		 	required: true
-	   	},
-	   	name: {
-			value: ''
-	   	},
-	},
-   	label: function () {
-		return this.name || 'cen-input';
-   	},
-	icon: 'bridge-dash.png'
-});
+    RED.nodes.registerType('cen-input', {
+        category: 'hmr_centrifugo',
+        color: '#C0DEED',
+        outputs: 1,
+        defaults: {
+            server: {
+                value: "",
+                type: "cen-config",
+                required: true
+            },
+            name: {
+                value: ''
+            },
+        },
+        label: function () {
+            return this.name || 'cen-input';
+        },
+        icon: 'bridge-dash.png'
+    });
 </script>
 
 <script type="text/x-red" data-template-name="cen-input">
@@ -25,4 +25,5 @@ RED.nodes.registerType('cen-input',{
 		<label for="node-input-server"><i class="icon-bookmark"></i> Server</label>
 		<input type="text" id="node-input-server">
 	</div>
+
 </script>

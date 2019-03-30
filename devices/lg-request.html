@@ -1,25 +1,25 @@
 <script type="text/javascript">
-	RED.nodes.registerType('lgtv-request2', {
-		category: 'hmr_devices',
-		color: '#C0DEED',
-		inputs: 1,
-		outputs: 1,
-		defaults: {
-			tv: {
-				value: '',
-				type: 'lgtv-config',
-				required: true
-			},
-			name: {
-				value: ''
-			}
-		},
-		label: function () {
-			return this.name || 'lgtv-request2';
-		},
-		icon: 'bridge-dash.png',
-		paletteLabel: 'lgtv-request2'
-	});
+    RED.nodes.registerType('lgtv-request2', {
+        category: 'hmr_devices',
+        color: '#C0DEED',
+        inputs: 1,
+        outputs: 1,
+        defaults: {
+            tv: {
+                value: '',
+                type: 'lgtv-config',
+                required: true
+            },
+            name: {
+                value: ''
+            }
+        },
+        label: function () {
+            return this.name || 'lgtv-request2';
+        },
+        icon: 'bridge-dash.png',
+        paletteLabel: 'lgtv-request2'
+    });
 </script>
 
 <script type="text/x-red" data-template-name="lgtv-request2">
@@ -31,6 +31,7 @@
 		<label for="node-input-name"><i class="icon-bookmark"></i> Name</label>
 		<input type="text" id="node-input-name">
 	</div>
+
 </script>
 
 <script type="text/x-red" data-help-name="lgtv-request2">
@@ -41,4 +42,5 @@
 	<p>
 		Return msg.payload as JSON object if success and false if failed
 	</p>
+
 </script>

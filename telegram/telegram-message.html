@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="telegram-message">
+<script data-template-name="telegram-message" type="text/x-red">
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
         <input type="text" id="node-input-topic" placeholder="Topic">
@@ -31,62 +31,66 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
+
+
 </script>
 
 <!-- HELP -->
 <script type="text/x-red" data-help-name="telegram-message">
   To send message to telegram
+
+
 </script>
 
 <!-- INIT -->
 <script type="text/javascript">
-    RED.nodes.registerType('telegram-message',{
+    RED.nodes.registerType('telegram-message', {
         category: 'hmr_telegram',
 
         defaults: {
-    	   	server: {
-       		 	value :"",
-       		 	type  :"telegram-config",
-       		 	required: true
-    	   	},
-          chatIdType  : {value:'msg'},
-          chatId      : {value:'payload'},
-          messageType  : {value:'msg'},
-          message      : {value:'payload'},
-          name : {value: ''},
+            server: {
+                value: "",
+                type: "telegram-config",
+                required: true
+            },
+            chatIdType: {value: 'msg'},
+            chatId: {value: 'payload'},
+            messageType: {value: 'msg'},
+            message: {value: 'payload'},
+            name: {value: ''},
         },
 
-        color   : '#CCC',
-        inputs:1,               // set the number of inputs - only 0 or 1
-        outputs:0,              // set the number of outputs - 0 to n
+        color: '#CCC',
+        inputs: 1,               // set the number of inputs - only 0 or 1
+        outputs: 0,              // set the number of outputs - 0 to n
 
         // set the icon (held in icons dir below where you save the node)
-        label: function() {     // sets the default label contents
-            return this.name||this.topic||"telegram-message";
+        label: function () {     // sets the default label contents
+            return this.name || this.topic || "telegram-message";
         },
 
-        labelStyle: function() { // sets the class to apply to the label
-            return this.name ? "node_label_italic":"";
+        labelStyle: function () { // sets the class to apply to the label
+            return this.name ? "node_label_italic" : "";
         },
 
-        oneditprepare: function() {
-          if (!this.chatIdType) {
-            this.chatIdType = 'msg';
-          }
-          if (!this.messageType) {
-            this.messageType = 'msg';
-          }
+        oneditprepare: function () {
+            if (!this.chatIdType) {
+                this.chatIdType = 'msg';
+            }
+            if (!this.messageType) {
+                this.messageType = 'msg';
+            }
 
-          $('#node-input-chatId').typedInput({
-            default   : 'msg',
-            types     : ['msg','flow','global','str'],
-            typeField : $('#node-input-chatIdType')
-          });
-          $('#node-input-message').typedInput({
-            default   : 'msg',
-            types     : ['msg','flow','global','str'],
-            typeField : $('#node-input-messageType')
-          });
+            $('#node-input-chatId').typedInput({
+                default: 'msg',
+                types: ['msg', 'flow', 'global', 'str'],
+                typeField: $('#node-input-chatIdType')
+            });
+            $('#node-input-message').typedInput({
+                default: 'msg',
+                types: ['msg', 'flow', 'global', 'str'],
+                typeField: $('#node-input-messageType')
+            });
         }
     });
 </script>

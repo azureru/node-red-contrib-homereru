@@ -1,5 +1,5 @@
 <!-- DIALOG -->
-<script type="text/x-red" data-template-name="file-pass">
+<script data-template-name="file-pass" type="text/x-red">
     <!-- Input -->
     <div class="form-row">
         <label for="node-input-input"><i class="fa fa-arrow-left"></i> Filename</label>
@@ -19,6 +19,8 @@
         <input type="checkbox" id="node-input-islogic">
     </div>
 
+
+
 </script>
 
 <!-- HELP -->
@@ -31,48 +33,50 @@
     When not checked, this node will only pass the <code>msg</code> to the next node only if the <code>input</code>
     exists
     <p>
+
+
 </script>
 
 <!-- INIT -->
 <script type="text/javascript">
-    RED.nodes.registerType('file-pass',{
+    RED.nodes.registerType('file-pass', {
         category: 'hmr_pass',
         defaults: {
-            name       : {value:''},
-            inputType  : {value:'msg'},
-            islogic    : {value:false},
-            input      : {value:'payload'}
+            name: {value: ''},
+            inputType: {value: 'msg'},
+            islogic: {value: false},
+            input: {value: 'payload'}
         },
-        color   : '#E9967A',
-        inputs  : 1,
-        outputs : 1,
-        icon    : "hmr_trackback.png",
+        color: '#E9967A',
+        inputs: 1,
+        outputs: 1,
+        icon: "hmr_trackback.png",
 
-        label   : function() {
+        label: function () {
             var msg = '';
             msg = this.name || this.topic || "file-pass";
 
             // show user this is a logic pass
             if (this.islogic) {
-              msg = msg + ' →';
+                msg = msg + ' →';
             }
 
             return msg;
         },
 
-        labelStyle: function() {
+        labelStyle: function () {
             return this.name ? "node_label_italic" : "";
         },
 
-        oneditprepare: function() {
+        oneditprepare: function () {
             if (!this.inputType) {
-              this.inputType = 'msg';
+                this.inputType = 'msg';
             }
 
             $('#node-input-input').typedInput({
-              default   : 'msg',
-              types     : ['msg','flow','global','str'],
-              typeField : $('#node-input-inputType')
+                default: 'msg',
+                types: ['msg', 'flow', 'global', 'str'],
+                typeField: $('#node-input-inputType')
             });
         }
     });

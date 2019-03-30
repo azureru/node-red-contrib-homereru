@@ -1,5 +1,5 @@
 <!-- DIALOG -->
-<script type="text/x-red" data-template-name="ip-public">
+<script data-template-name="ip-public" type="text/x-red">
 </script>
 
 <!-- HELP -->
@@ -8,19 +8,21 @@
     Fetch for Public IP using <code>whatismyip.akamai.com</code> the result
     will be passed on <code>msg.payload</code>
     </p>
+
+
 </script>
 
 <!-- INIT -->
 <script type="text/javascript">
-    RED.nodes.registerType('ip-public',{
+    RED.nodes.registerType('ip-public', {
         category: 'hmr_network',
         defaults: {},
-        color   : '#3FADB5',
-        inputs  : 1,
-        outputs : 1,
-        icon    : "white-globe.png",
+        color: '#3FADB5',
+        inputs: 1,
+        outputs: 1,
+        icon: "white-globe.png",
 
-        label: function() {
+        label: function () {
             return "ip public";
         }
     });
