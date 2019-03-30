@@ -1,3 +1,4 @@
+
 const TelegramBot = require('node-telegram-bot-api');
 
 module.exports = function(RED) {
@@ -8,8 +9,8 @@ module.exports = function(RED) {
 
 	function TelegramConfigNode(config) {
 		RED.nodes.createNode(this, config);
-		var self = this;
 
+		var self = this;
 		self.secret = self.credentials.secret;
 
 		// create a telegram bot - with no polling since we going to use
@@ -64,6 +65,7 @@ module.exports = function(RED) {
 		};
 	}
 
+  // !Register
 	RED.nodes.registerType('telegram-config', TelegramConfigNode, {
 		credentials: {
 			secret: {

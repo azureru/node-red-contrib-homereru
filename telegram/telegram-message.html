@@ -4,6 +4,7 @@
         <input type="text" id="node-input-topic" placeholder="Topic">
     </div>
 
+    <!-- Server -->
     <div class="form-row">
   		<label for="node-input-server"><i class="icon-bookmark"></i> Telegram</label>
   		<input type="text" id="node-input-server">
@@ -24,6 +25,8 @@
     </div>
 
     <br/>
+
+    <!-- Name -->
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -38,8 +41,9 @@
 <!-- INIT -->
 <script type="text/javascript">
     RED.nodes.registerType('telegram-message',{
-        category: 'hmr_telegram',      // the palette category
-        defaults: {             // defines the editable properties of the node
+        category: 'hmr_telegram',
+
+        defaults: {
     	   	server: {
        		 	value :"",
        		 	type  :"telegram-config",
@@ -49,17 +53,22 @@
           chatId      : {value:'payload'},
           messageType  : {value:'msg'},
           message      : {value:'payload'},
+          name : {value: ''},
         },
+
         color   : '#CCC',
         inputs:1,               // set the number of inputs - only 0 or 1
         outputs:0,              // set the number of outputs - 0 to n
+
         // set the icon (held in icons dir below where you save the node)
         label: function() {     // sets the default label contents
             return this.name||this.topic||"telegram-message";
         },
+
         labelStyle: function() { // sets the class to apply to the label
             return this.name ? "node_label_italic":"";
         },
+
         oneditprepare: function() {
           if (!this.chatIdType) {
             this.chatIdType = 'msg';

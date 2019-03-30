@@ -1,8 +1,11 @@
 module.exports = function(RED) {
   "use strict";
 
+  var util = require('../lib/util.js');
+
   function TelegramMessageNode(config) {
     RED.nodes.createNode(this, config);
+
     var node = this;
 
     // Retrieve the config node
@@ -23,53 +26,10 @@ module.exports = function(RED) {
 
     this.on('input', function(msg) {
       var chatId = '';
-      try {
-        switch (node.chatIdType) {
-          case 'msg':
-            chatId = RED.util.getMessageProperty(msg, node.chatId);
-            break;
-          case 'flow':
-            chatId = node.context().flow.get(node.chatId);
-            break;
-          case 'global':
-            chatId = node.context().global.get(node.chatId);
-            break;
-          case 'str':
-            chatId = node.chatId;
-            break;
-          default:
-            chatId = node.chatId;
-        }
-      } catch (err) {
-        chatId = node.chatId;
-        node.warn('Input property, ' +
-          node.chatIdType + '.' +
-          node.chatId + ', does NOT exist.');
-      }
+      chatId = util.parseMsg(RED, node, node.chatIdType, node.chatId, msg);
+
       var message = '';
-      try {
-        switch (node.messageType) {
-          case 'msg':
-            message = RED.util.getMessageProperty(msg, node.message);
-            break;
-          case 'flow':
-            message = node.context().flow.get(node.message);
-            break;
-          case 'global':
-            message = node.context().global.get(node.message);
-            break;
-          case 'str':
-            message = node.message;
-            break;
-          default:
-            message = node.message;
-        }
-      } catch (err) {
-        message = node.message;
-        node.warn('Input property, ' +
-          node.messageType + '.' +
-          node.message + ', does NOT exist.');
-      }
+      message = util.parseMsg(RED, node, node.messageType, node.message, msg);
 
       // send the message
       this.server.bot.sendMessage(chatId, message);
@@ -77,8 +37,8 @@ module.exports = function(RED) {
       msg.message = message;
       node.send(msg);
     });
-
   }
 
+  // !Register
   RED.nodes.registerType("telegram-message", TelegramMessageNode);
 }
