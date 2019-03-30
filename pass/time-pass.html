@@ -5,17 +5,20 @@
 
 <!-- DIALOG -->
 <script type="text/x-red" data-template-name="time-pass">
-    <!-- INPUT -->
+    <!-- Input -->
     <div class="form-row">
         <label for="node-input-input"><i class="fa fa-arrow-left"></i> Input from</label>
         <input type="text" id="node-input-input" style="width: 70%;" placeholder="payload">
         <input type="hidden" id="node-input-inputType">
     </div>
 
+    <!-- Timezone -->
     <div class="form-row">
-        <label for="node-input-inTz">Input Tz</label>
+        <label for="node-input-inTz">Timezone</label>
         <input type="text" id="node-input-inTz" placeholder="[determined by system]" style="width:70%;">
     </div>
+
+    <!-- Range of Time -->
     <div class="form-row">
         <label for="node-input-from">From</label>
         <input type="text" id="node-input-from">
@@ -24,23 +27,38 @@
         <label for="node-input-to">To</label>
         <input type="text" id="node-input-to">
     </div>
+
+    <!-- Pass to logic -->
+    <div class="form-row">
+        <label for="node-input-islogic">Is logic</label>
+        <input type="checkbox" id="node-input-islogic">
+    </div>
 </script>
 
 <!-- HELP -->
 <script type="text/x-red" data-help-name="time-pass">
-    <p>
-    This will --passtrough-- <code>msg</code> only if the current time is
+    Node to logic pass only if the current input as time is
     within the specified range
-    </p>
+    <hr />
     <p>
-        Timezone are written in <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank">Formats</a> for example:
-        <ul>
-            <li><code>Asia/Jakarta</code></li>
-            <li><code>UTC</code></li>
-            <li><code>Etc/GMT+7</code></li>
-            <li><code>America/Los_Angeles</code></li>
-        </ul>
-    </p>
+    <strong>Timezone</strong>
+    Timezone is written in <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank">Formats</a> for example:
+    <ul>
+        <li><code>Asia/Jakarta</code></li>
+        <li><code>UTC</code></li>
+        <li><code>Etc/GMT+7</code></li>
+        <li><code>America/Los_Angeles</code></li>
+    </ul>
+    <p>
+    <strong>From</strong> From time in HH:MM format
+    <p>
+    <strong>To</strong> To Time in HH:MM format
+    <p>
+    <strong>Is logic</strong> when true this node will always pass the <code>msg</code> with additional <code>logic</code> property that
+    indicate whether the <code>input</code> is within range (0 not in range, 1 in range)
+    When not checked, this node will only pass the <code>msg</code> to the next node only if the <code>input</code>
+    is within range
+    <p>
 </script>
 
 <!-- INIT -->
@@ -94,6 +112,8 @@
             inputType  : {value:'date'},
             input      : {value:''},
 
+            islogic    : {value:false},
+
             from : {value:'00:00', required: true, validate: validateTime},
             to   : {value:'23:59', required: true, validate: validateTime},
         },
@@ -101,9 +121,19 @@
         inputs  : 1,
         outputs : 1,
         icon    : "hmr_trackback.png",
+
         label: function() {
-            return (this.from && this.to) ? (this.from + "-" + this.to) : "";
+            var msg = '';
+            msg = (this.from && this.to) ? (this.from + "-" + this.to) : "";
+
+            // show user this is a logic pass
+            if (this.islogic) {
+              msg = msg + ' →';
+            }
+
+            return msg;
         },
+
         oneditsave: function() {
             var nodeFrom = $("#node-input-from");
             var nodeTo = $("#node-input-to");
@@ -122,6 +152,7 @@
                 nodeTo.val(isValidTo);
             }
         },
+
         oneditprepare: function() {
             if (!this.inputType) {
               this.inputType = 'date';

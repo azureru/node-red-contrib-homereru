@@ -6,6 +6,7 @@
         <input type="text" id="node-input-input" style="width: 70%;" placeholder="payload">
         <input type="hidden" id="node-input-inputType">
     </div>
+
     <!-- Decay -->
     <div id="decay-details" class="form-row">
         <label for="node-input-rate"><i class="fa fa-clock-o"></i> Decay</label>
@@ -18,6 +19,7 @@
           <option value="day">Day</option>
         </select>
     </div>
+
     <!-- Pass to logic -->
     <div class="form-row">
         <label for="node-input-islogic">Is logic</label>
@@ -27,14 +29,18 @@
 
 <!-- HELP -->
 <script type="text/x-red" data-help-name="change-pass">
+    Node to logic pass if detecting changes in a primitive value
+    <hr />
     <p>
-    If <strong>is logic</strong> is checked this node will always pass the <code>msg</code> with additional <code>logic</code> property that
+    <strong>Input</strong> the value to check
+    <p>
+    <strong>Decay</strong> is how long we store the previous value to compare for changes
+    <p>
+    <strong>Is logic</strong> when true this node will always pass the <code>msg</code> with additional <code>logic</code> property that
     indicate whether the <code>input</code> is changed. (0 no-changes, 1 detect changes)
-    <p>
     When not checked, this node will only pass the <code>msg</code> to the next node only if the <code>input</code>
     is changed from the previously recorded value
     <p>
-    <strong>Decay</strong> is how long we store the delta value to determine changes
 </script>
 
 <!-- INIT -->

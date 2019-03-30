@@ -5,17 +5,20 @@ Apache 2 License with minor adjustment
 
 <!-- DIALOG -->
 <script type="text/x-red" data-template-name="day-pass">
-    <!-- INPUT -->
+    <!-- Input -->
     <div class="form-row">
         <label for="node-input-input"><i class="fa fa-arrow-left"></i> Input from</label>
         <input type="text" id="node-input-input" style="width: 70%;" placeholder="payload">
         <input type="hidden" id="node-input-inputType">
     </div>
 
+    <!-- TZ -->
     <div class="form-row">
-        <label for="node-input-inTz">Input Tz</label>
+        <label for="node-input-inTz">Timezone</label>
         <input type="text" id="node-input-inTz" placeholder="[determined by system]" style="width:70%;">
     </div>
+
+    <!-- Days -->
     <div class="form-row">
         <label for="node-input-d1" style="display: block;">
             Days
@@ -23,35 +26,46 @@ Apache 2 License with minor adjustment
         <label></label>
         <table style="display: inline-block; width: 100%">
             <tr>
-                <td><input type="checkbox" id="node-input-d1" value="1">Mon</td>
-                <td><input type="checkbox" id="node-input-d2" value="2">Tue</td>
-                <td><input type="checkbox" id="node-input-d3" value="3">Wed</td>
-                <td><input type="checkbox" id="node-input-d4" value="4">Thu</td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" id="node-input-d5" value="5">Fri</td>
-                <td><input type="checkbox" id="node-input-d6" value="6">Sat</td>
-                <td><input type="checkbox" id="node-input-d7" value="7">Sun</td>
+                <td width="10%"><input type="checkbox" id="node-input-d1" value="1">Mon</td>
+                <td width="10%"><input type="checkbox" id="node-input-d2" value="2">Tue</td>
+                <td width="10%"><input type="checkbox" id="node-input-d3" value="3">Wed</td>
+                <td width="10%"><input type="checkbox" id="node-input-d4" value="4">Thu</td>
+                <td width="10%"><input type="checkbox" id="node-input-d5" value="5">Fri</td>
+                <td width="10%"><input type="checkbox" id="node-input-d6" value="6">Sat</td>
+                <td width="10%"><input type="checkbox" id="node-input-d7" value="7">Sun</td>
             </tr>
         </table>
+    </div>
+
+    <!-- Pass to logic -->
+    <div class="form-row">
+        <label for="node-input-islogic">Is logic</label>
+        <input type="checkbox" id="node-input-islogic">
     </div>
 </script>
 
 <!-- HELP -->
 <script type="text/x-red" data-help-name="day-pass">
+    Node to logic pass if the input match specified day rule
+    <hr />
     <p>
-    This will --passtrough-- <code>msg</code> only if the current day is
-    matched with those are selected
-    </p>
+    <strong>Timezone</strong>
+    Timezone is written in <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank">Formats</a> for example:
+    <ul>
+        <li><code>Asia/Jakarta</code></li>
+        <li><code>UTC</code></li>
+        <li><code>Etc/GMT+7</code></li>
+        <li><code>America/Los_Angeles</code></li>
+    </ul>
     <p>
-        Timezone are written in <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank">Formats</a> for example:
-        <ul>
-            <li><code>Asia/Jakarta</code></li>
-            <li><code>UTC</code></li>
-            <li><code>Etc/GMT+7</code></li>
-            <li><code>America/Los_Angeles</code></li>
-        </ul>
-    </p>
+    <strong>Days</strong> What days to check for matching
+
+    <p>
+    <strong>Is logic</strong> when true this node will always pass the <code>msg</code> with additional <code>logic</code> property that
+    indicate whether the <code>input</code> is within range (0 not in range, 1 in range)
+    When not checked, this node will only pass the <code>msg</code> to the next node only if the <code>input</code>
+    is within range
+    <p>
 </script>
 
 <!-- INIT -->
@@ -63,6 +77,8 @@ Apache 2 License with minor adjustment
 
             inputType  : {value:'date'},
             input      : {value:''},
+
+            islogic    : {value:false},
 
             d1   : {value:true},
             d2   : {value:true},
@@ -76,7 +92,9 @@ Apache 2 License with minor adjustment
         inputs  : 1,
         outputs : 1,
         icon    : "hmr_trackback.png",
+
         label: function() {
+            var msg = '';
             var label = [];
             if (this.d1) {
                 label.push("Mon");
@@ -99,8 +117,16 @@ Apache 2 License with minor adjustment
             if (this.d7) {
                 label.push("Sun");
             }
-            return label.join(", ");
+            msg = label.join(", ");
+
+            // show user this is a logic pass
+            if (this.islogic) {
+              msg = msg + ' →';
+            }
+
+            return msg;
         },
+
         oneditprepare: function() {
             if (!this.inputType) {
               this.inputType = 'date';
@@ -112,6 +138,7 @@ Apache 2 License with minor adjustment
               typeField : $('#node-input-inputType')
             });
 
+            // use api to get TZs
             $.getJSON('hmr-api/moment',function(data) {
               if ( $('#node-input-inTz').val() === '' ) $('#node-input-inTz').val(data.tz);
             });

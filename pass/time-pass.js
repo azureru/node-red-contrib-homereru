@@ -16,6 +16,7 @@ module.exports = function(RED) {
 
     node.input = config.input || 'date'; // where to take the input from
     node.inputType = config.inputType || 'msg'; // msg, flow or global
+    node.islogic = config.islogic || false;
 
     node.from = config.from;
     node.to = config.to;
@@ -96,11 +97,23 @@ module.exports = function(RED) {
 
       if (pass) {
         util.statusOk(node, sTime);
-        node.send(msg);
       } else {
         util.statusFail(node, sTime);
-        node.send(null);
       }
+
+      if (node.islogic) {
+          // on logic mode - we always pass the value
+          // but we add flag to msg to indicate the logic state
+          msg.logic = (pass) ? 1 : 0;
+          node.send(msg);
+          return;
+      }
+
+      // not a logic mode
+      if (pass) {
+        node.send(msg);
+      }
+      node.send(null);
     });
 
     this.on("close", function() {

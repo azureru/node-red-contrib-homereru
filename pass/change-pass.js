@@ -42,28 +42,26 @@ module.exports = function(RED) {
         }
       }
 
+      if (pass) {
+        util.statusOk(node, value);
+      } else {
+        util.statusFail(node, value);
+      }
+
       if (node.islogic) {
           // on logic mode - we always pass the value
-          // but we add flag to msg to indicate the logic state
+          // but we add property `logic` to msg to indicate the logic state
           msg.logic = (pass) ? 1 : 0;
-          if (pass) {
-            util.statusOk(node, msg.logic);
-          } else {
-            util.statusFail(node, msg.logic);
-          }
           node.send(msg);
           return;
       }
 
-      // is not a logic mode - we only continue to next
+      // when not a logic mode - we only continue to next
       // node if the condition is passed
       if (pass) {
-        util.statusOk(node, value);
         node.send(msg);
         return;
       }
-
-      util.statusFail(node, value);
       node.send(null);
     });
 
