@@ -1,24 +1,36 @@
 <!-- DIALOG -->
 <script type="text/x-red" data-template-name="file-pass">
-    <!-- INPUT -->
+    <!-- Input -->
     <div class="form-row">
         <label for="node-input-input"><i class="fa fa-arrow-left"></i> Filename</label>
         <input type="text" id="node-input-input" style="width: 70%;" placeholder="payload">
         <input type="hidden" id="node-input-inputType">
     </div>
 
-    <!-- NODE NAME - Should always be the last field -->
+    <!-- Node Name -->
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
+
+    <!-- Pass to logic -->
+    <div class="form-row">
+        <label for="node-input-islogic">Is logic</label>
+        <input type="checkbox" id="node-input-islogic">
+    </div>
+
 </script>
 
 <!-- HELP -->
 <script type="text/x-red" data-help-name="file-pass">
+    Node to logic pass if the input path file is exists
+    <hr />
     <p>
-    This will --passtrough-- <code>msg</code> only if the input <code>mgs.payload</code> file path is exists
-    </p>
+    <strong>Is logic</strong> when true this node will always pass the <code>msg</code> with additional <code>logic</code> property that
+    indicate whether the <code>input</code> is exists (0 not exists, 1 exists)
+    When not checked, this node will only pass the <code>msg</code> to the next node only if the <code>input</code>
+    exists
+    <p>
 </script>
 
 <!-- INIT -->
@@ -28,18 +40,30 @@
         defaults: {
             name       : {value:''},
             inputType  : {value:'msg'},
+            islogic    : {value:false},
             input      : {value:'payload'}
         },
         color   : '#E9967A',
         inputs  : 1,
         outputs : 1,
         icon    : "hmr_trackback.png",
+
         label   : function() {
-            return this.name || this.topic || "file-pass";
+            var msg = '';
+            msg = this.name || this.topic || "file-pass";
+
+            // show user this is a logic pass
+            if (this.islogic) {
+              msg = msg + ' →';
+            }
+
+            return msg;
         },
+
         labelStyle: function() {
             return this.name ? "node_label_italic" : "";
         },
+
         oneditprepare: function() {
             if (!this.inputType) {
               this.inputType = 'msg';

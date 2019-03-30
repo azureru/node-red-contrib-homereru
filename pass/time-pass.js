@@ -95,6 +95,9 @@ module.exports = function(RED) {
         }
       }
 
+      // augment the result
+      msg.passTime = sTime;
+
       if (pass) {
         util.statusOk(node, sTime);
       } else {
@@ -112,6 +115,7 @@ module.exports = function(RED) {
       // not a logic mode
       if (pass) {
         node.send(msg);
+        return;
       }
       node.send(null);
     });

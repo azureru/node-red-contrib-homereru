@@ -66,6 +66,9 @@ module.exports = function(RED) {
           break;
       }
 
+      // augment the result
+      msg.passDay = sDay;
+
       if (pass) {
         util.statusOk(node, sDay);
       } else {

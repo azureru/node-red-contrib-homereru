@@ -1,12 +1,12 @@
-<!-- DIALOG -->
 <script type="text/x-red" data-template-name="range-pass">
-    <!-- INPUT -->
+    <!-- Input -->
     <div class="form-row">
         <label for="node-input-input"><i class="fa fa-arrow-left"></i> Input from</label>
         <input type="text" id="node-input-input" style="width: 70%;" placeholder="payload">
         <input type="hidden" id="node-input-inputType">
     </div>
 
+    <!-- Range -->
     <div class="form-row">
         <label for="node-input-from">From</label>
         <input type="text" id="node-input-from">
@@ -15,13 +15,23 @@
         <label for="node-input-to">To</label>
         <input type="text" id="node-input-to">
     </div>
+
+    <!-- Pass to logic -->
+    <div class="form-row">
+        <label for="node-input-islogic">Is logic</label>
+        <input type="checkbox" id="node-input-islogic">
+    </div>
 </script>
 
-<!-- HELP -->
 <script type="text/x-red" data-help-name="range-pass">
+    Node to logic pass only if the current input is within the specified range
+    <hr />
     <p>
-    This will --passtrough-- <code>msg</code> only if the input <code>mgs.payload</code> is within the specified range value
-    </p>
+    <strong>Is logic</strong> when true this node will always pass the <code>msg</code> with additional <code>logic</code> property that
+    indicate whether the <code>input</code> is within range (0 not in range, 1 in range)
+    When not checked, this node will only pass the <code>msg</code> to the next node only if the <code>input</code>
+    is within range
+    <p>
 </script>
 
 <!-- INIT -->
@@ -31,6 +41,7 @@
         defaults: {
             inputType  : {value:'msg'},
             input      : {value:'payload'},
+            islogic    : {value:false},
 
             from : {value:'0', required: true},
             to   : {value:'100', required: true},
@@ -39,9 +50,19 @@
         inputs  : 1,
         outputs : 1,
         icon    : "hmr_trackback.png",
+
         label: function() {
-            return (this.from && this.to) ? (this.from + "-" + this.to) : "";
+            var msg = '';
+            msg = (this.from && this.to) ? (this.from + "-" + this.to) : "";
+
+            // show user this is a logic pass
+            if (this.islogic) {
+              msg = msg + ' →';
+            }
+
+            return msg;
         },
+
         oneditprepare: function() {
             if (!this.inputType) {
               this.inputType = 'msg';

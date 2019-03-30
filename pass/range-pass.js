@@ -13,6 +13,7 @@ module.exports = function(RED) {
 
     node.from = config.from;
     node.to = config.to;
+    node.islogic = config.islogic || false;
 
     node.on('input', function(msg) {
       var inp = '';
@@ -26,14 +27,27 @@ module.exports = function(RED) {
         pass = true;
       }
 
+      // augment the result
+      msg.passValue = intVal;
+
       if (pass) {
         util.statusOk(node, intVal);
+      } else {
+        util.statusFail(node, intVal);
+      }
+
+      if (node.islogic) {
+          // on logic mode - we always pass the value
+          // but we add flag to msg to indicate the logic state
+          msg.logic = (pass) ? 1 : 0;
+          node.send(msg);
+          return;
+      }
+
+      if (pass) {
         node.send(msg);
         return;
       }
-
-      // not within bounds - do nothing
-      util.statusFail(node, intVal);
       node.send(null);
     });
 

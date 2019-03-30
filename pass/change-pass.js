@@ -42,6 +42,9 @@ module.exports = function(RED) {
         }
       }
 
+      // augment the result
+      msg.passValue = value;
+
       if (pass) {
         util.statusOk(node, value);
       } else {
