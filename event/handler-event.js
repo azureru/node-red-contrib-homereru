@@ -1,9 +1,9 @@
 module.exports = function (RED) {
     "use strict";
 
-    var when = require('when');
-    var _ = require('underscore');
-    var EventEmitter = require('events').EventEmitter;
+    const when = require('when');
+    const _ = require('underscore');
+    const EventEmitter = require('events').EventEmitter;
 
     var operators = {
         'eq': function (a, b) {
@@ -63,7 +63,7 @@ module.exports = function (RED) {
         this.numberOfListeners = 0; //List number of listeners
         this.srcPrefix = '[src:]'; //Identifies if a value should come from an nrl-source
 
-        var self = this;
+        let self = this;
 
         //Keeps track if an input msg has been received
         self.inputreceived = false;
@@ -72,7 +72,7 @@ module.exports = function (RED) {
 
         //Functions to work with the values store (keeps updates from the sources)
         self.valuesAdd = function (id, val) {
-            var found = _.findIndex(self.values, function (obj) {
+            let found = _.findIndex(self.values, function (obj) {
                 return obj.id == id
             });
             if (found === -1) {
@@ -86,21 +86,21 @@ module.exports = function (RED) {
                     value: val
                 };
             }
-        }
+        };
 
         self.valueGet = function (id) {
             var found = _.find(self.values, function (obj) {
                 return obj.id == id
             });
             return (found != undefined ? found.value : undefined);
-        }
+        };
 
         //Initialise config
         self.configNode.initialise();
 
         //Tidy up to ensure correct numbers in values
         for (var i = 0; i < this.rules.length; i += 1) {
-            var rule = this.rules[i];
+            let rule = this.rules[i];
 
             //Copy src references to new variables
             // rule.vs and rule.v2s (s=source)
@@ -125,15 +125,15 @@ module.exports = function (RED) {
         self.assessRules = function () {
 
             //Validate the rules
-            var numbersTrue = 0;
-            var valueArr = [];
+            let numbersTrue = 0;
+            let valueArr = [];
 
             _.each(self.rules, function (rule) {
                 //Get the value to compare with
                 // rule.v2 is not always available. Only used for between values
-                var val = self.valueGet(rule.s);
-                var v = rule.vs ? self.valueGet(rule.vs) : rule.v;
-                var v2 = rule.v2s ?
+                let val = self.valueGet(rule.s);
+                let v = rule.vs ? self.valueGet(rule.vs) : rule.v;
+                let v2 = rule.v2s ?
                     self.valueGet(rule.v2s) : (rule.v2 ? rule.v2 : 0);
 
                 if (val != undefined && v != undefined && v2 != undefined) {
@@ -150,7 +150,7 @@ module.exports = function (RED) {
                 }
             })
 
-            var msg = {
+            let msg = {
                 matched: valueArr
             };
 
@@ -194,7 +194,7 @@ module.exports = function (RED) {
                     clearInterval(self.repeattimer);
                 }
             }
-        }
+        };
 
         //Add listeners for all sources
         when.promise(function (resolve, reject) {
@@ -241,7 +241,7 @@ module.exports = function (RED) {
             self.warn(err);
         });
 
-        /* Register a listner if the node has an input */
+        /* Register a listener if the node has an input */
         if (self.inputson) {
             self.on("input", function (msg) {
                 self.basemsg = msg;
@@ -269,5 +269,6 @@ module.exports = function (RED) {
 
     }
 
+    // !Register
     RED.nodes.registerType("handler-event", HmrHandlerNode);
-}
+};

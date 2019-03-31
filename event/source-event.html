@@ -110,7 +110,7 @@ a positive number (&gt;=0). If set to 0 it is disabled.</p>
 </script>
 
 <script type="text/javascript">
-    function oneditprepareDatasource() {
+    function onEditPrepareDataSource() {
         $("#node-input-expire").change(function () {
             if ($("#node-input-expire").is(':checked')) {
                 $("#expire-details").show();
@@ -219,11 +219,14 @@ a positive number (&gt;=0). If set to 0 it is disabled.</p>
         outputs: 0,
         icon: "fa-hdd-o.png",
         align: "right",
+
         label: function () {
             return (this.name || "undefined");
         },
-        oneditprepare: oneditprepareDatasource,
-        oneditsave: function () {
+
+        onEditPrepare: onEditPrepareDataSource,
+
+        onEditSave: function () {
             var node = this;
             if ($("#node-input-output").is(":checked")) {
                 node.outputs = 1;
@@ -241,7 +244,8 @@ a positive number (&gt;=0). If set to 0 it is disabled.</p>
                 }
             }
         },
-        onpaletteadd: function () {
+
+        onPaletteAdd: function () {
             /* Monitor if a node is added and generate a unique id based on
                timestamp. This timestamp is used to create the MQTT message and
                the handler-event nodes knows to which message to subscribe to

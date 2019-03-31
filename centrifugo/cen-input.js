@@ -2,7 +2,8 @@ module.exports = function (RED) {
 
     function CenInputNode(config) {
         RED.nodes.createNode(this, config);
-        var node = this;
+
+        let node = this;
 
         // Retrieve the config node
         this.server = RED.nodes.getNode(config.server);
@@ -21,5 +22,6 @@ module.exports = function (RED) {
         });
     }
 
+    // !Register
     RED.nodes.registerType('cen-input', CenInputNode);
 };

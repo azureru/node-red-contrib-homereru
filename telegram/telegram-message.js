@@ -1,7 +1,7 @@
 module.exports = function (RED) {
     "use strict";
 
-    var util = require('../lib/util.js');
+    const util = require('../lib/util.js');
 
     function TelegramMessageNode(config) {
         RED.nodes.createNode(this, config);
@@ -25,11 +25,8 @@ module.exports = function (RED) {
         node.messageType = config.messageType || 'msg'; // msg, flow or global
 
         this.on('input', function (msg) {
-            var chatId = '';
-            chatId = util.parseMsg(RED, node, node.chatIdType, node.chatId, msg);
-
-            var message = '';
-            message = util.parseMsg(RED, node, node.messageType, node.message, msg);
+            var chatId = util.parseMsg(RED, node, node.chatIdType, node.chatId, msg);
+            var message = util.parseMsg(RED, node, node.messageType, node.message, msg);
 
             // send the message
             this.server.bot.sendMessage(chatId, message);

@@ -7,8 +7,6 @@ module.exports = function (RED) {
     "use strict";
 
     const util = require('../lib/util.js');
-    const MILLIS_TO_NANOS = 1000000;
-    const SECONDS_TO_NANOS = 1000000000;
     const _ = require('underscore');
 
     function HmrLimitNode(config) {
@@ -27,21 +25,20 @@ module.exports = function (RED) {
         }
 
         this.name = config.name;
-        this.idList = [];
         this.buffer = [];
         this.intervalID = -1;
-        this.lastSent = null;
-        var node = this;
+        let node = this;
 
         this.on("input", function (msg) {
-            var content = _.extend(msg, {});
+            let content = _.extend(msg, {});
 
             /* Check if there is a buffer and there has been a different
                earlier in the queue that differs from incoming
                and if that is the case, simply drop that message */
             if (node.buffer.length > 0) {
+                let foundIndex = 0;
                 do {
-                    var foundIndex = _.findIndex(node.buffer, function (obj) {
+                    foundIndex = _.findIndex(node.buffer, function (obj) {
                         if (msg.payload == obj.payload) {
                             return true;
                         } else {

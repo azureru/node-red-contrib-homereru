@@ -1,9 +1,9 @@
 module.exports = function (RED) {
     "use strict";
 
-    var when = require('when');
-    var _ = require('underscore');
-    var EventEmitter = require('events').EventEmitter;
+    const when = require('when');
+    const _ = require('underscore');
+    const EventEmitter = require('events').EventEmitter;
 
     function SourceEventNode(n) {
         RED.nodes.createNode(this, n);
@@ -66,8 +66,8 @@ module.exports = function (RED) {
         self.lastSendPayload;
         self.sendToRules = function (payload) {
             if (typeof self.lastSendPayload == "undefined" ||
-                (typeof self.lastSendPayload !== "undefined" && self.lastSendPayload !=
-                    payload)) {
+                (typeof self.lastSendPayload !== "undefined" &&
+                    self.lastSendPayload != payload)) {
                 self.configNode.emitConfig(self.uid, payload);
             }
             self.lastSendPayload = payload;
@@ -169,5 +169,6 @@ module.exports = function (RED) {
         });
     }
 
+    // !Register
     RED.nodes.registerType("source-event", SourceEventNode);
-}
+};

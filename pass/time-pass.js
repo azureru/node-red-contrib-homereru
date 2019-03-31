@@ -6,8 +6,8 @@
 module.exports = function (RED) {
     "use strict";
 
-    var util = require('../lib/util.js');
-    var dateUtil = require('../lib/date.js');
+    const util = require('../lib/util.js');
+    const dateUtil = require('../lib/date.js');
 
     function TimePassNode(config) {
         RED.nodes.createNode(this, config);

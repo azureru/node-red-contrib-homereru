@@ -17,12 +17,12 @@
 module.exports = function (RED) {
     "use strict";
 
-    var http = require("follow-redirects").http;
-    var https = require("follow-redirects").https;
-    var urllib = require("url");
-    var mustache = require("mustache");
-    var querystring = require("querystring");
-    var util = require('../lib/util.js');
+    const http = require("follow-redirects").http;
+    const https = require("follow-redirects").https;
+    const urllib = require("url");
+    const mustache = require("mustache");
+    const querystring = require("querystring");
+    const util = require('../lib/util.js');
 
     function HTTPRequest(n) {
         RED.nodes.createNode(this, n);

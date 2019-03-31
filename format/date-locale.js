@@ -5,33 +5,31 @@
 module.exports = function (RED) {
     "use strict";
 
-    var util = require('../lib/util.js');
-
-    var moment = require('moment-timezone');
-    var osLocale = require('os-locale');
-    var hostTz = moment.tz.guess();
-    var hostLocale = osLocale.sync();
+    const util = require('../lib/util.js');
+    const moment = require('moment-timezone');
+    const osLocale = require('os-locale');
+    const hostTz = moment.tz.guess();
+    const hostLocale = osLocale.sync();
 
     // The main node definition - most things happen in here
     function DateLocaleNode(config) {
         // Create a RED node
         RED.nodes.createNode(this, config);
 
-        this.input = config.input || 'payload'; // where to take the input from
-        this.inputType = config.inputType || 'msg'; // msg, flow or global
-        this.fakeUTC = config.fakeUTC || false; // is the input UTC rather than local date/time?
-
-        this.adjAmount = config.adjAmount || 0; // number
-        this.adjType = config.adjType || 'days'; // days, hours, etc.
-        this.adjDir = config.adjDir || 'add'; // add or subtract
-
-        this.inFormat = config.inFormat || ''; // valid moment.js format string
-        this.outFormat = config.outFormat || ''; // valid moment.js format string
-
-        this.inTz = config.inTz || false; // timezone, '' or zone name, e.g. Europe/London
-        this.outTz = config.outTz || this.inTz; // timezone, '' or zone name, e.g. Europe/London
-
         var node = this;
+        node.input = config.input || 'payload'; // where to take the input from
+        node.inputType = config.inputType || 'msg'; // msg, flow or global
+        node.fakeUTC = config.fakeUTC || false; // is the input UTC rather than local date/time?
+
+        node.adjAmount = config.adjAmount || 0; // number
+        node.adjType = config.adjType || 'days'; // days, hours, etc.
+        node.adjDir = config.adjDir || 'add'; // add or subtract
+
+        node.inFormat = config.inFormat || ''; // valid moment.js format string
+        node.outFormat = config.outFormat || ''; // valid moment.js format string
+
+        node.inTz = config.inTz || false; // timezone, '' or zone name, e.g. Europe/London
+        node.outTz = config.outTz || node.inTz; // timezone, '' or zone name, e.g. Europe/London
 
         // respond to inputs....
         node.on('input', function (msg) {
@@ -40,38 +38,7 @@ module.exports = function (RED) {
                 msg.topic = node.topic;
             }
 
-            var inp = '';
-            if (node.input === '') {
-                inp = moment();
-            } else {
-                // Otherwise, check which input type & get the input
-                try {
-                    switch (node.inputType) {
-                        case 'msg':
-                            inp = RED.util.getMessageProperty(msg, node.input);
-                            break;
-                        case 'flow':
-                            inp = node.context().flow.get(node.input);
-                            break;
-                        case 'global':
-                            inp = node.context().global.get(node.input);
-                            break;
-                        case 'date':
-                            inp = moment();
-                            break;
-                        case 'str':
-                            inp = node.input.trim();
-                            break;
-                        default:
-                            inp = moment();
-                            node.warn('Unrecognised Input Type, ' + node.inputType + '. Output has been set to NOW.');
-                    }
-                } catch (err) {
-                    inp = moment();
-                    node.warn('Input property, ' + node.inputType + '.' + node.input + ', does NOT exist. Output has been set to NOW.');
-                }
-            }
-
+            var inp = util.parseMsg(RED, node, node.inputType, node.input, msg);
             if (typeof inp === 'number') {
                 inp = '' + inp;
             }
@@ -93,7 +60,7 @@ module.exports = function (RED) {
                         inp.add(1, 'days');
                         break;
                     default:
-                        if (this.inFormat !== '') {
+                        if (node.inFormat !== '') {
                             inp = moment.tz(inp, node.inFormat, node.inTz);
                         } else {
                             inp = moment.tz(inp, node.inTz);
@@ -101,7 +68,7 @@ module.exports = function (RED) {
                 }
             }
 
-            // offseting
+            // off-setting
             if (node.adjAmount !== 0) {
                 if (isMeasureValid(node.adjType)) {
                     if (node.adjDir === 'subtract') {
@@ -174,12 +141,12 @@ module.exports = function (RED) {
     }
 
     function isMeasureValid(adjType) {
-        var validTypes = ['years', 'y', 'quarters', 'Q', 'months', 'M', 'weeks', 'w', 'days', 'd', 'hours', 'h', 'minutes', 'm', 'seconds', 's', 'milliseconds', 'ms'];
+        let validTypes = ['years', 'y', 'quarters', 'Q', 'months', 'M', 'weeks', 'w', 'days', 'd', 'hours', 'h', 'minutes', 'm', 'seconds', 's', 'milliseconds', 'ms'];
         return validTypes.indexOf(adjType) > -1;
     }
 
+    // !Register
     RED.nodes.registerType("date-locale", DateLocaleNode);
-
     RED.httpAdmin.get("/hmr-api/moment", RED.auth.needsPermission('moment.read'), function (req, res) {
         res.json({
             "tz": hostTz,

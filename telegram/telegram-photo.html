@@ -1,10 +1,5 @@
 <script data-template-name="telegram-photo" type="text/x-red">
     <div class="form-row">
-        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
-        <input type="text" id="node-input-topic" placeholder="Topic">
-    </div>
-
-    <div class="form-row">
   		<label for="node-input-server"><i class="icon-bookmark"></i> Telegram</label>
   		<input type="text" id="node-input-server">
   	</div>
@@ -28,7 +23,6 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
-
 
 </script>
 
@@ -70,7 +64,7 @@
             return this.name ? "node_label_italic" : "";
         },
 
-        oneditprepare: function () {
+        onEditPrepare: function () {
             if (!this.chatIdType) {
                 this.chatIdType = 'msg';
             }

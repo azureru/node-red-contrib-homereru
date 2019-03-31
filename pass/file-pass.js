@@ -1,8 +1,8 @@
 module.exports = function (RED) {
     "use strict";
 
-    var fs = require('fs');
-    var util = require('../lib/util.js');
+    const fs = require('fs');
+    const util = require('../lib/util.js');
 
     function FilePassNode(config) {
         RED.nodes.createNode(this, config);
@@ -15,7 +15,6 @@ module.exports = function (RED) {
 
         node.on('input', function (msg) {
             var inp = '';
-
             inp = util.parseMsg(RED, node, node.inputType, node.input, msg);
 
             // normalize the path by removing whitespaces on the left and right

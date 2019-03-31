@@ -1,14 +1,15 @@
-var Centrifuge = require('centrifuge');
-var Token = require('../lib/token.js');
+const Centrifuge = require('centrifuge');
+const Token = require('../lib/token.js');
 
 module.exports = function (RED) {
-    var status;
-    var token;
-    var client;
+    let status;
+    let token;
+    let client;
 
     function CenConfigNode(config) {
         RED.nodes.createNode(this, config);
-        var self = this;
+
+        let self = this;
 
         self.users = {};
         self.host = config.host;
@@ -17,13 +18,13 @@ module.exports = function (RED) {
         self.secret = self.credentials.secret;
         self.info = "";
 
-        var timestamp = "" + Math.round(new Date().getTime() / 1000);
-        var tokenizer = new Token(self.secret);
-        var clientToken = tokenizer.clientToken(self.user, "" + timestamp, self.info);
+        let timestamp = "" + Math.round(new Date().getTime() / 1000);
+        let tokenizer = new Token(self.secret);
+        let clientToken = tokenizer.clientToken(self.user, "" + timestamp, self.info);
 
-        var client = new Centrifuge(self.host);
+        let client = new Centrifuge(self.host);
         client.setToken(self.secret);
-        var callbacks = {
+        let callbacks = {
             "message": function (message) {
                 var msg = message;
                 Object.keys(self.users).forEach(function (id) {
@@ -63,7 +64,7 @@ module.exports = function (RED) {
 
         this.setStatus = function (c) {
             status = c;
-            var s;
+            let s;
             switch (c) {
                 case 'connecting':
                     s = {
@@ -107,6 +108,7 @@ module.exports = function (RED) {
         };
     }
 
+    // !Register
     RED.nodes.registerType('cen-config', CenConfigNode, {
         credentials: {
             secret: {

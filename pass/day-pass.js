@@ -6,8 +6,8 @@
 module.exports = function (RED) {
     "use strict";
 
-    var dateUtil = require('../lib/date.js');
-    var util = require('../lib/util.js');
+    const dateUtil = require('../lib/date.js');
+    const util = require('../lib/util.js');
 
     function DayPassNode(config) {
         RED.nodes.createNode(this, config);

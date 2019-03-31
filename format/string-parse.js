@@ -1,8 +1,8 @@
 module.exports = function (RED) {
     "use strict";
 
-    var qs = require('querystring');
-    var util = require('../lib/util.js');
+    const qs = require('querystring');
+    const util = require('../lib/util.js');
 
     function StringCommandNode(config) {
         RED.nodes.createNode(this, config);
@@ -22,37 +22,8 @@ module.exports = function (RED) {
                 msg.topic = node.topic;
             }
 
-            var inp = '';
-            if (node.input === '') {
-                inp = moment();
-            } else {
-                // Otherwise, check which input type & get the input
-                try {
-                    switch (node.inputType) {
-                        case 'msg':
-                            inp = RED.util.getMessageProperty(msg, node.input);
-                            break;
-                        case 'flow':
-                            inp = node.context().flow.get(node.input);
-                            break;
-                        case 'global':
-                            inp = node.context().global.get(node.input);
-                            break;
-                        case 'date':
-                            inp = moment();
-                            break;
-                        case 'str':
-                            inp = node.input.trim();
-                            break;
-                        default:
-                            inp = moment();
-                            node.warn('Unrecognised Input Type, ' + node.inputType + '. Output has been set to NOW.');
-                    }
-                } catch (err) {
-                    inp = moment();
-                    node.warn('Input property, ' + node.inputType + '.' + node.input + ', does NOT exist. Output has been set to NOW.');
-                }
-            }
+            var inp = util.parseMsg(RED, node, node.inputType, node.input, msg);
+
             // since this is a string parse - always treat as string
             if (typeof inp === 'number') {
                 inp = '' + inp;
@@ -60,12 +31,13 @@ module.exports = function (RED) {
 
             var outputMessage = msg;
             outputMessage.parsed = {};
+            var wholeMessage = '';
+
             switch (node.modeType) {
                 case "delimiter":
                     var arr = inp.split(node.delimiter);
                     if (arr.length > 0) {
                         outputMessage.parsed['command'] = arr[0];
-                        var wholeMessage = '';
                         for (var i = 0; i < arr.length; i++) {
                             outputMessage.parsed['' + i] = arr[i];
                             if (i > 0) {
@@ -101,7 +73,6 @@ module.exports = function (RED) {
                         }
                         outputMessage.parsed['command'] = cmd;
                         outputMessage.parsed['bot'] = bot;
-                        var wholeMessage = '';
                         for (var i = 0; i < arr.length; i++) {
                             outputMessage.parsed['' + i] = arr[i];
                             if (i > 0) {

@@ -2,7 +2,8 @@ module.exports = function (RED) {
 
     function LgtvRequest2Node(n) {
         RED.nodes.createNode(this, n);
-        var node = this;
+
+        let node = this;
         this.tv = n.tv;
 
         this.tvConn = RED.nodes.getNode(this.tv);
@@ -32,5 +33,6 @@ module.exports = function (RED) {
         }
     }
 
+    // !Register
     RED.nodes.registerType('lgtv-request2', LgtvRequest2Node);
 };

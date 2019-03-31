@@ -1,7 +1,7 @@
 module.exports = function (RED) {
     "use strict";
 
-    var util = require('../lib/util.js');
+    const util = require('../lib/util.js');
 
     function ChangePassNode(config) {
         RED.nodes.createNode(this, config);
@@ -18,9 +18,7 @@ module.exports = function (RED) {
         node.islogic = config.islogic || false;
 
         node.on('input', function (msg) {
-            var inp = '';
-
-            inp = util.parseMsg(RED, node, node.inputType, node.input, msg);
+            var inp = util.parseMsg(RED, node, node.inputType, node.input, msg);
 
             var pass = false;
             var value = inp;

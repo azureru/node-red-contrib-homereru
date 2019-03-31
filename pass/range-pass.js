@@ -1,7 +1,7 @@
 module.exports = function (RED) {
     "use strict";
 
-    var util = require('../lib/util.js');
+    const util = require('../lib/util.js');
 
     function RangePassNode(config) {
         RED.nodes.createNode(this, config);

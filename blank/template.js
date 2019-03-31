@@ -17,13 +17,13 @@ module.exports = function (RED) {
         this.topic = config.topic;
 
         // copy "this" object in case we need it in context of callbacks of other functions.
-        var node = this;
+        let node = this;
 
         // Do whatever you need to do in here - declare callbacks etc
         // Note: this sample doesn't do anything much - it will only send
         // this message once at startup...
         // Look at other real nodes for some better ideas of what to do....
-        var msg = {};
+        let msg = {};
         msg.topic = this.topic;
         msg.payload = "Hello world !"
 
@@ -48,5 +48,4 @@ module.exports = function (RED) {
     // Register the node by name. This must be called before overriding any of the
     // Node functions.
     RED.nodes.registerType("sample", SampleNode);
-
-}
+};

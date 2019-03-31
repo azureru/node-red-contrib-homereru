@@ -60,10 +60,12 @@
         inputs: 0,
         outputs: 1,
         icon: "fa-question-circle.png",
+
         label: function () {
             return (this.name || "undefined");
         },
-        oneditprepare: function () {
+
+        onEditPrepare: function () {
             var operators = [
                 {v: "eq", t: "=="},
                 {v: "neq", t: "!="},
@@ -147,14 +149,14 @@
                             target.val(srcPrefix + val);  //Save the selected option to value field
                         }
                     });
-                }
+                };
                 //For onchange event to modify box. Reacts on [space]
                 var addSelectSourceFieldEvent = function (evt) {
                     var target = $(evt.target);
                     if (target.val().indexOf(' ') == 0) {
                         addSelectSourceField(target);
                     }
-                }
+                };
 
                 //Add values
                 var valueDiv = $('<span/>').appendTo(row);
@@ -263,7 +265,8 @@
                 generateRule(i + 1, rule);
             }
         },
-        oneditsave: function () {
+
+        onEditSave: function () {
             if ($("#node-input-inputson").is(":checked")) {
                 this.inputs = 1;
             } else {

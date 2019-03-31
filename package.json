@@ -1,7 +1,7 @@
 {
   "name": "node-red-contrib-homereru",
   "version": "1.0.0",
-  "description": "Cheap home automation toolkit for node-red",
+  "description": "Cheap home automation logic toolkit for node-red",
   "main": "index.js",
   "homepage": "https://azureru.com",
   "scripts": {
