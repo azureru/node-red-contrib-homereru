@@ -17,9 +17,8 @@
 module.exports = function (RED) {
     "use strict";
 
-    const http = require("follow-redirects").http;
     const https = require("follow-redirects").https;
-    const urllib = require("url");
+    const urlLib = require("url");
     const mustache = require("mustache");
     const querystring = require("querystring");
     const util = require('../lib/util.js');
@@ -29,7 +28,7 @@ module.exports = function (RED) {
 
         var node = this;
         var nodeUrl = n.url;
-        var isTemplatedUrl = (nodeUrl || "").indexOf("{{") != -1;
+        var isTemplatedUrl = (nodeUrl || "").indexOf("{{") !== -1;
         var nodeMethod = n.method || "GET";
         this.ret = n.ret || "txt";
 
@@ -55,7 +54,7 @@ module.exports = function (RED) {
 
         this.on("input", function (msg) {
             var preRequestTimestamp = process.hrtime();
-            util.statusProgress("httpin.status.requesting");
+            util.statusProgress(node,"httpin.status.requesting");
 
             var url = nodeUrl || msg.url;
             if (msg.url && nodeUrl && (nodeUrl !== msg.url)) {
@@ -84,7 +83,7 @@ module.exports = function (RED) {
                 method = msg.method.toUpperCase();
             }
 
-            var opts = urllib.parse(url);
+            var opts = urlLib.parse(url);
             opts.method = method;
             opts.headers = {};
             opts.port = 443;
@@ -122,14 +121,13 @@ module.exports = function (RED) {
             var payload = null;
 
             if (msg.payload &&
-                (method == "POST" || method == "PUT" || method == "PATCH")) {
+                (method === "POST" || method === "PUT" || method === "PATCH")) {
                 if (typeof msg.payload === "string" || Buffer.isBuffer(msg.payload)) {
                     payload = msg.payload;
                 } else if (typeof msg.payload == "number") {
                     payload = msg.payload + "";
                 } else {
-                    if (opts.headers['content-type'] ==
-                        'application/x-www-form-urlencoded') {
+                    if (opts.headers['content-type'] === 'application/x-www-form-urlencoded') {
                         payload = querystring.stringify(msg.payload);
                     } else {
                         payload = JSON.stringify(msg.payload);
@@ -175,7 +173,7 @@ module.exports = function (RED) {
                     opts.headers['Host'] = opts.host;
                     var heads = opts.headers;
                     var path = opts.pathname = opts.href;
-                    opts = urllib.parse(prox);
+                    opts = urlLib.parse(prox);
                     opts.path = opts.pathname = path;
                     opts.headers = heads;
                     opts.method = method;
@@ -208,8 +206,7 @@ module.exports = function (RED) {
                         var diff = process.hrtime(preRequestTimestamp);
                         var ms = diff[0] * 1e3 + diff[1] * 1e-6;
                         var metricRequestDurationMillis = ms.toFixed(3);
-                        node.metric("duration.millis", msg,
-                            metricRequestDurationMillis);
+                        node.metric("duration.millis", msg, metricRequestDurationMillis);
                         if (res.client && res.client.bytesRead) {
                             node.metric("size.bytes", msg, res.client.bytesRead);
                         }
@@ -235,7 +232,7 @@ module.exports = function (RED) {
                 node.error(RED._(
                     "node-red:common.notification.errors.no-response"), msg);
                 setTimeout(function () {
-                    util.statusFail("common.notification.errors.no-response");
+                    util.statusFail(node,"common.notification.errors.no-response");
                 }, 10);
                 req.abort();
             });
@@ -255,7 +252,7 @@ module.exports = function (RED) {
                 msg.payload = err.toString() + " : " + url;
                 msg.statusCode = err.code;
                 node.send(msg);
-                util.statusFail(err.code);
+                util.statusFail(node, err.code);
             });
 
             if (payload) {
