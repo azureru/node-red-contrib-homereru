@@ -65,7 +65,7 @@
             return (this.name || "undefined");
         },
 
-        onEditPrepare: function () {
+        oneditprepare: function () {
             var operators = [
                 {v: "eq", t: "=="},
                 {v: "neq", t: "!="},
@@ -266,7 +266,7 @@
             }
         },
 
-        onEditSave: function () {
+        oneditsave: function () {
             if ($("#node-input-inputson").is(":checked")) {
                 this.inputs = 1;
             } else {
