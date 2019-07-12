@@ -44,6 +44,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "centrifuge": "~2.0.0",
+    "mem": ">=4.0.0",
     "date-utils": "^1.2.17",
     "events": "^1.1.0",
     "follow-redirects": "^1.2.1",
