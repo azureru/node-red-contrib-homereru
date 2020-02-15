@@ -30,7 +30,6 @@ module.exports = function (RED) {
             debug: false,
             token: clientToken        
         });
-        client.setToken(self.secret);
         let callbacks = {
             "message": function (message) {
                 var msg = message;
