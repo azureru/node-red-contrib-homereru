@@ -11,7 +11,7 @@ module.exports = function (RED) {
 
         let self = this;
 
-        self.users = {};
+        self.users = {};    
         self.host = config.host;
         self.user = config.user;
         self.channel = config.channel || 'public';
@@ -22,7 +22,14 @@ module.exports = function (RED) {
         let tokenizer = new Token(self.secret);
         let clientToken = tokenizer.clientToken(self.user, "" + timestamp, self.info);
 
-        let client = new Centrifuge(self.host);
+        let client = new Centrifuge({
+            url: self.host,
+            user: self.user,
+            timestamp: timestamp,
+            info: self.info,
+            debug: false,
+            token: clientToken        
+        });
         client.setToken(self.secret);
         let callbacks = {
             "message": function (message) {
