@@ -25,8 +25,20 @@ module.exports = function (RED) {
         });
         client.on('message', function(message){
             var msg = message;
+            console.log(message);
+
+
             Object.keys(self.users).forEach(function (id) {
-                self.users[id].emit("input", msg.asString());
+                self.users[id].emit("input", {
+                    // {
+                    //   "uid":"kJCJOjJBnm4BrGsyN1pmcm",
+                    //   "client":"9ec561f3-abbb-452e-af76-2831704cdc41",
+                    //   "info":{"user":"auto","client":"9ec561f3-abbb-452e-af76-2831704cdc41"},
+                    //   "channel":"public",
+                    //   "data":{"input":"Www"},
+                    //   "_msgid":"fd1c347c.48f708"}
+                    //
+                });
             });        
         });
         client.subscribe({
