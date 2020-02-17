@@ -13,7 +13,7 @@ module.exports = function (RED) {
 
         self.host = config.host;
         self.user = config.user;
-        self.channel = config.channel || 'public';
+        self.channel = config.channel || 'public/';
         self.secret = self.credentials.secret;
         self.info = "";
 
@@ -29,7 +29,10 @@ module.exports = function (RED) {
                 self.users[id].emit("input", msg.asString());
             });        
         });
-        client.subscribe(self.secret, self.channel);
+        client.subscribe({
+            key : self.secret,
+            channel : self.channel
+        });
 
         this.register = function (clientNode) {
             self.users[clientNode.id] = clientNode;
