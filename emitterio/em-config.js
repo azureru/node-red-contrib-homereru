@@ -17,6 +17,7 @@ module.exports = function (RED) {
         self.secret = self.credentials.secret;
         self.info = "";
 
+        self.setStatus('connecting');
         let client = emitter.connect({
             host: self.host,
             port: 8800,
@@ -25,22 +26,33 @@ module.exports = function (RED) {
         });
         client.on('message', function(message){
             var msg = message;
-            console.log(message);
+            console.log(message.asObject());
 
-
+            // broadcast to each `em-input` nodes that use this config
             Object.keys(self.users).forEach(function (id) {
                 self.users[id].emit("input", {
-                    // {
-                    //   "uid":"kJCJOjJBnm4BrGsyN1pmcm",
-                    //   "client":"9ec561f3-abbb-452e-af76-2831704cdc41",
-                    //   "info":{"user":"auto","client":"9ec561f3-abbb-452e-af76-2831704cdc41"},
-                    //   "channel":"public",
-                    //   "data":{"input":"Www"},
-                    //   "_msgid":"fd1c347c.48f708"}
-                    //
+                    "uid" : "",
+                    "client" : "",
+                    "info" : {
+                        "user" : "",
+                        "client" : "",
+                    },
+                    "channel" : message.channel,
+                    "data" : message.asObject(),
+                    "_msgid" : ""
                 });
             });        
         });
+        client.on('connect', function (con) {
+            self.setStatus('connect');
+        });
+        client.on('disconnect', function () {
+            self.setStatus('disconnected');
+        });
+        client.on('error', function (err) {
+            self.setStatus('prompt');
+        });
+
         client.subscribe({
             key : self.secret,
             channel : self.channel
