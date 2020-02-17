@@ -45,7 +45,6 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "centrifuge": "~1.5.0",
     "date-utils": "^1.2.17",
     "emitter-io": "^1.39.0",
     "events": "^1.1.0",

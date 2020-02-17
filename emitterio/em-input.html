@@ -1,0 +1,30 @@
+<script type="text/javascript">
+    RED.nodes.registerType('em-input', {
+        category: 'hmr_emmitterio',
+        color: '#C0DEED',
+        outputs: 1,
+        icon: 'bridge-dash.png',
+        defaults: {
+            server: {
+                value: "",
+                type: "em-config",
+                required: true
+            },
+            name: {
+                value: ''
+            },
+        },
+
+        label: function () {
+            return this.name || 'em-input';
+        },
+    });
+</script>
+
+<script type="text/x-red" data-template-name="em-input">
+	<div class="form-row">
+		<label for="node-input-server"><i class="icon-bookmark"></i> Server</label>
+		<input type="text" id="node-input-server">
+	</div>
+
+</script>
