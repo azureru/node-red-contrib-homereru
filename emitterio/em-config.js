@@ -17,7 +17,12 @@ module.exports = function (RED) {
         self.secret = self.credentials.secret;
         self.info = "";
 
-        let client = emitter.connect(self.host, 8800);
+        let client = emitter.connect({
+            host: self.host,
+            port: 8800,
+            keepalive: 30,
+            secure: false
+        });
         client.on('message', function(msg){
             var msg = message;
             Object.keys(self.users).forEach(function (id) {
