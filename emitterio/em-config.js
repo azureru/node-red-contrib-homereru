@@ -16,8 +16,7 @@ module.exports = function (RED) {
         self.channel = config.channel || 'public/';
         self.secret = self.credentials.secret;
         self.info = "";
-
-        self.setStatus('connecting');
+        
         let client = emitter.connect({
             host: self.host,
             port: 8800,
@@ -26,7 +25,6 @@ module.exports = function (RED) {
         });
         client.on('message', function(message){
             var msg = message;
-            console.log(message.asObject());
 
             // broadcast to each `em-input` nodes that use this config
             Object.keys(self.users).forEach(function (id) {
@@ -44,13 +42,13 @@ module.exports = function (RED) {
             });        
         });
         client.on('connect', function (con) {
-            self.setStatus('connect');
+            console.log('emitter - connect');
         });
         client.on('disconnect', function () {
-            self.setStatus('disconnected');
+           console.log('emitter - disconnect'); 
         });
         client.on('error', function (err) {
-            self.setStatus('prompt');
+            console.log('emitter - ', err);
         });
 
         client.subscribe({
