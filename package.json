@@ -15,8 +15,8 @@
   ],
   "node-red": {
     "nodes": {
-      "em-config": "emmitterio/em-config.js",
-      "em-input": "emmitterio/em-input.js",
+      "em-config": "emitterio/em-config.js",
+      "em-input": "emitterio/em-input.js",
       
       "https-eval": "network/https-eval.js",
       "ip-public": "network/ip-public.js",
