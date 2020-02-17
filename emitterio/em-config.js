@@ -23,7 +23,7 @@ module.exports = function (RED) {
             keepalive: 30,
             secure: false
         });
-        client.on('message', function(msg){
+        client.on('message', function(message){
             var msg = message;
             Object.keys(self.users).forEach(function (id) {
                 self.users[id].emit("input", msg.asString());
