@@ -15,13 +15,15 @@
   ],
   "node-red": {
     "nodes": {
-      "cen-config": "centrifugo/cen-config.js",
+      "em-config": "emmitterio/em-config.js",
+      "em-input": "emmitterio/em-input.js",
+      
       "https-eval": "network/https-eval.js",
       "ip-public": "network/ip-public.js",
       "str-parse": "format/string-parse.js",
       "date-locale": "format/date-locale.js",
       "lgtv-request2": "devices/lg-request.js",
-      "cen-input": "centrifugo/cen-input.js",
+      
       "file-pass": "pass/file-pass.js",
       "day-pass": "pass/day-pass.js",
       "time-pass": "pass/time-pass.js",
@@ -45,6 +47,7 @@
   "dependencies": {
     "centrifuge": "~1.5.0",
     "date-utils": "^1.2.17",
+    "emitter-io": "^1.39.0",
     "events": "^1.1.0",
     "follow-redirects": "^1.2.1",
     "lodash": ">=4.17.13",
