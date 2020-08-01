@@ -10,10 +10,14 @@ contributing PR to those module will kind of ruin their use-case
 # Nodes
 
 ## Passer
+- Change Pass : Only pass to next node if the value is changed (there's decay on changed delta)
 - Day Pass : Only pass to next node if the day is within specified days
 - Time Pass : Only pass to next node if the time is within time range
-- Value Pass : Only pass to next node if the value is within value range
+- Range Pass : Only pass to next node if the value is within value range
 - File Pass : Only pass to next node - if the specified file exists
+- Limit pass : Only pass to next node - only if the message interval is within rate limit
+
+## Emitterio
 
 ## Format
 - Date Locale : Date formatter
@@ -22,11 +26,6 @@ contributing PR to those module will kind of ruin their use-case
 ## Network
 - IP Public : Get your public IP
 - HTTPS Eval : Do HTTPS request, and return the `cert` information as JSON
-
-## Todo
-- True Pass : Only pass if the value is true
-- Delta Pass : Only pass the value if the value is different with the previous value
-
 
 # Icons
 Sanscons - CCSA 3.0 from http://somerandomdude.com/work/sanscons/
