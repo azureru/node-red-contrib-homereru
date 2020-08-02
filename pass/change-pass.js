@@ -16,6 +16,7 @@ module.exports = function (RED) {
         node.inputType = config.inputType || 'msg'; // msg, flow or global
         node.previousValue = "";
         node.islogic = config.islogic || false;
+        node.failCounter = 0;
 
         node.on('input', function (msg) {
             var inp = util.parseMsg(RED, node, node.inputType, node.input, msg);
@@ -43,10 +44,16 @@ module.exports = function (RED) {
             // augment the result
             msg.passValue = value;
 
+            var notes = value;
+            if (node.failCounter > 0) {
+                notes += " ("+ node.failCounter + " skip)"
+            } 
+
             if (pass) {
-                util.statusOk(node, value);
+                util.statusOk(node, notes);
             } else {
-                util.statusFail(node, value);
+                node.failCounter += 1;
+                util.statusFail(node, notes);
             }
 
             if (node.islogic) {
