@@ -29,8 +29,9 @@ module.exports = function (RED) {
             var message = util.parseMsg(RED, node, node.messageType, node.message, msg);
 
             // send the photo
-            this.server.bot.sendPhoto(chatId, message, {
+            this.server.bot.sendPhoto(chatId, message, {}, {
                 filename: "file",
+                contentType: "image/jpeg"
             });
             msg.chatId = chatId;
             msg.message = message;
