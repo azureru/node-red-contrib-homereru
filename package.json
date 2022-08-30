@@ -51,7 +51,7 @@
     "mem": "^8.1.1",
     "moment": "^2.22.2",
     "moment-parseformat": "^2.1.4",
-    "moment-timezone": "^0.5.33",
+    "moment-timezone": "^0.5.35",
     "mustache": "^2.3.0",
     "node-telegram-bot-api": "^0.30.0",
     "os-locale": "^4.0.0",
